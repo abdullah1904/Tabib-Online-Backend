@@ -1,5 +1,5 @@
 {
-  "id": "8b411925-9020-4130-9103-4d6b9d317975",
+  "id": "3a10d989-5142-4b6c-a1e6-ddc753ec84af",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -28,25 +28,25 @@
         },
         "allergies": {
           "name": "allergies",
-          "type": "varchar(1000)",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true
         },
         "currentMedications": {
           "name": "currentMedications",
-          "type": "varchar(1000)",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true
         },
         "familyMedicalHistory": {
           "name": "familyMedicalHistory",
-          "type": "varchar(2000)",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true
         },
         "pastMedicalHistory": {
           "name": "pastMedicalHistory",
-          "type": "varchar(2000)",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true
         },
@@ -124,7 +124,7 @@
         },
         "fullName": {
           "name": "fullName",
-          "type": "varchar(255)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
@@ -136,63 +136,61 @@
         },
         "gender": {
           "name": "gender",
-          "type": "gender",
-          "typeSchema": "public",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "email": {
           "name": "email",
-          "type": "varchar(255)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "address": {
           "name": "address",
-          "type": "varchar(500)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "phoneNumber": {
           "name": "phoneNumber",
-          "type": "varchar(20)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "emergencyContactNumber": {
           "name": "emergencyContactNumber",
-          "type": "varchar(20)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "emergencyContactName": {
           "name": "emergencyContactName",
-          "type": "varchar(255)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "verificationDocumentType": {
           "name": "verificationDocumentType",
-          "type": "verification_document_type",
-          "typeSchema": "public",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "verificationDocumentNumber": {
           "name": "verificationDocumentNumber",
-          "type": "varchar(100)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "verificationDocumentURL": {
           "name": "verificationDocumentURL",
-          "type": "varchar(1000)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "password": {
           "name": "password",
-          "type": "varchar(255)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
@@ -216,11 +214,10 @@
         },
         "status": {
           "name": "status",
-          "type": "user_status",
-          "typeSchema": "public",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "'pending'"
+          "default": 0
         },
         "activatedAt": {
           "name": "activatedAt",
@@ -280,35 +277,7 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {
-    "public.user_status": {
-      "name": "user_status",
-      "schema": "public",
-      "values": [
-        "pending",
-        "active",
-        "suspended",
-        "deactivated"
-      ]
-    },
-    "public.gender": {
-      "name": "gender",
-      "schema": "public",
-      "values": [
-        "male",
-        "female"
-      ]
-    },
-    "public.verification_document_type": {
-      "name": "verification_document_type",
-      "schema": "public",
-      "values": [
-        "nationalIDCard",
-        "passport",
-        "otherGovtId"
-      ]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "roles": {},

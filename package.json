@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/abdullah1904/Tabib-Online-Backend#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
@@ -32,13 +34,18 @@
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
     "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
+    "multer": "^2.0.2",
     "postgres": "^3.4.7",
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.3.1",
     "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.5",

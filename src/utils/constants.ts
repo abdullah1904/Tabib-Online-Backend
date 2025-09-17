@@ -263,21 +263,21 @@ const HttpStatusCode: StatusCodes = {
 };
 
 enum Gender {
-    MALE = "male",
-    FEMALE = "female"
+    MALE = 1,
+    FEMALE = 2
 }
 
 enum UserVerificationDocumentType {
-    NATIONAL_ID_CARD = "nationalIDCard",
-    PASSPORT = "passport",
-    OTHER_GOVT_ID = "otherGovtId"
+    NATIONAL_ID_CARD = 1,
+    PASSPORT = 2,
+    OTHER_GOVT_ID = 3
 }
 
 enum AccountStatus {
-    PENDING = "pending",
-    ACTIVE = "active",
-    SUSPENDED = "suspended",
-    DEACTIVATED = "deactivated"
+    PENDING = 0,
+    ACTIVE = 1,
+    DEACTIVATED = 2,
+    SUSPENDED = 3
 }
 
 export {

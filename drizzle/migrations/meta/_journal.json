@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1757484760518,
-      "tag": "0000_friendly_puff_adder",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1757485392915,
-      "tag": "0001_dry_captain_cross",
+      "when": 1758049643380,
+      "tag": "0000_wakeful_stellaris",
       "breakpoints": true
     }
   ]

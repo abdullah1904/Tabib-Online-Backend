@@ -5,7 +5,7 @@ export const SignupValidator = joi.object({
     // Personal Information
     fullName: joi.string().max(100).required(),
     age: joi.number().integer().min(0).max(120).required(),
-    gender: joi.string().valid(...Object.values(Gender)).required(),
+    gender: joi.number().valid(...Object.values(Gender)).required(),
     email: joi.string().email().max(100).required(),
     phoneNumber: joi.string().min(1).max(14).required(),
     address: joi.string().min(2).max(200).required(),
