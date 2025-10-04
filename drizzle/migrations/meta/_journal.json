@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758049643380,
-      "tag": "0000_wakeful_stellaris",
+      "when": 1759609034973,
+      "tag": "0000_equal_gorgon",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1759615721810,
+      "tag": "0001_lethal_infant_terrible",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759616599901,
+      "tag": "0002_curly_thunderball",
       "breakpoints": true
     }
   ]

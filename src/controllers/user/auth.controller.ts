@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { SignupValidator } from "../../utils/validators";
 import { HttpStatusCode } from "../../utils/constants";
 import { db } from "../..";
 import { UserTable } from "../../models/user.model";
@@ -7,6 +6,7 @@ import { and, eq, or } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { generateJWT } from "../../utils";
 import { MedicalRecordTable } from "../../models/medicalRecord.model";
+import { SignupUserValidator } from "../../validators/user.validators";
 
 const {
     HTTP_CREATED,
@@ -15,7 +15,7 @@ const {
 
 const SignupUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = SignupValidator.validate(req.body);
+        const { error, value } = SignupUserValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return

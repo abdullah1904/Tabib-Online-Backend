@@ -280,9 +280,16 @@ enum AccountStatus {
     SUSPENDED = 3
 }
 
+enum AdminPrivilege {
+    SUPER = 1,
+    WRITE = 2,
+    READ = 3
+}
+
 export {
     HttpStatusCode,
     Gender,
     UserVerificationDocumentType,
-    AccountStatus
+    AccountStatus,
+    AdminPrivilege
 }

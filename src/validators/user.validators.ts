@@ -1,7 +1,7 @@
 import joi from "joi";
-import { Gender, UserVerificationDocumentType, } from "./constants";
+import { Gender, UserVerificationDocumentType } from "../utils/constants";
 
-export const SignupValidator = joi.object({
+export const SignupUserValidator = joi.object({
     // Personal Information
     fullName: joi.string().max(100).required(),
     age: joi.number().integer().min(0).max(120).required(),

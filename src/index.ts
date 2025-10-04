@@ -9,11 +9,15 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { config } from "./utils/config";
 import { logger } from "./utils/logger";
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
 const app = express();
-const client = postgres(config.DATABASE_URL as string, { max: 10, idle_timeout: 30000, connect_timeout: 10000 });
-const database = drizzle(client, { logger: true });
+const client = postgres(config.DATABASE_URL as string, {
+  max: 10,
+  idle_timeout: 30000,
+  connect_timeout: 10000
+});
+const database = drizzle(client);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +46,7 @@ app.listen(config.PORT, () => {
 });
 
 cloudinary.config({
-    secure: true,
+  secure: true,
 });
 
 export { database as db, cloudinary };

@@ -1,3 +1,18 @@
+CREATE TABLE "admins" (
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "admins_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"imageURL" varchar(255),
+	"fullName" varchar(255) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"phone" varchar(255) NOT NULL,
+	"privilegeLevel" integer NOT NULL,
+	"recoveryEmail" varchar(255),
+	"password" varchar(255) NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "admins_email_unique" UNIQUE("email"),
+	CONSTRAINT "admins_phone_unique" UNIQUE("phone")
+);
+--> statement-breakpoint
 CREATE TABLE "medical_records" (
 	"bloodType" varchar(3) NOT NULL,
 	"height" numeric(5, 2) NOT NULL,
@@ -14,18 +29,18 @@ CREATE TABLE "medical_records" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
-	"fullName" varchar(256) NOT NULL,
+	"fullName" varchar(255) NOT NULL,
 	"age" integer NOT NULL,
 	"gender" integer NOT NULL,
-	"email" varchar(256) NOT NULL,
-	"address" varchar(256) NOT NULL,
-	"phoneNumber" varchar(256) NOT NULL,
-	"emergencyContactNumber" varchar(256) NOT NULL,
-	"emergencyContactName" varchar(256) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"address" varchar(255) NOT NULL,
+	"phoneNumber" varchar(255) NOT NULL,
+	"emergencyContactNumber" varchar(255) NOT NULL,
+	"emergencyContactName" varchar(255) NOT NULL,
 	"verificationDocumentType" integer NOT NULL,
-	"verificationDocumentNumber" varchar(256) NOT NULL,
-	"verificationDocumentURL" varchar(256) NOT NULL,
-	"password" varchar(256) NOT NULL,
+	"verificationDocumentNumber" varchar(255) NOT NULL,
+	"verificationDocumentURL" varchar(255) NOT NULL,
+	"password" varchar(255) NOT NULL,
 	"treatmentConsent" boolean NOT NULL,
 	"healthInfoDisclosureConsent" boolean NOT NULL,
 	"privacyPolicyConsent" boolean NOT NULL,

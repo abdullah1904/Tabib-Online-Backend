@@ -1,0 +1,1 @@
+ALTER TABLE "admins" ADD COLUMN "status" integer DEFAULT 1 NOT NULL;

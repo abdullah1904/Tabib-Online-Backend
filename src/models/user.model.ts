@@ -2,26 +2,25 @@ import {
     pgTable, 
     integer, 
     varchar, 
-    pgEnum,
     timestamp,
     boolean
 } from "drizzle-orm/pg-core";
-import { AccountStatus, Gender, UserVerificationDocumentType } from "../utils/constants";
+import { AccountStatus, } from "../utils/constants";
 
 export const UserTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    fullName: varchar({ length: 256 }).notNull(),
+    fullName: varchar({ length: 255 }).notNull(),
     age: integer().notNull(),
     gender: integer().notNull(),
-    email: varchar({ length: 256 }).notNull().unique(),
-    address: varchar({ length: 256 }).notNull(),
-    phoneNumber: varchar({ length: 256 }).notNull().unique(),
-    emergencyContactNumber: varchar({ length: 256 }).notNull(),
-    emergencyContactName: varchar({ length: 256 }).notNull(),
+    email: varchar({ length: 255 }).notNull().unique(),
+    address: varchar({ length: 255 }).notNull(),
+    phoneNumber: varchar({ length: 255 }).notNull().unique(),
+    emergencyContactNumber: varchar({ length: 255 }).notNull(),
+    emergencyContactName: varchar({ length: 255 }).notNull(),
     verificationDocumentType: integer().notNull(),
-    verificationDocumentNumber: varchar({ length: 256 }).notNull().unique(),
-    verificationDocumentURL: varchar({ length: 256 }).notNull(),
-    password: varchar({ length: 256 }).notNull(),
+    verificationDocumentNumber: varchar({ length: 255 }).notNull().unique(),
+    verificationDocumentURL: varchar({ length: 255 }).notNull(),
+    password: varchar({ length: 255 }).notNull(),
     treatmentConsent: boolean().notNull(),
     healthInfoDisclosureConsent: boolean().notNull(),
     privacyPolicyConsent: boolean().notNull(),

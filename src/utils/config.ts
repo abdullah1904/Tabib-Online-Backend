@@ -15,4 +15,6 @@ export const config = {
     CLOUDINARY_CLOUD_NAME: getValue("CLOUDINARY_CLOUD_NAME", null),
     CLOUDINARY_API_KEY: getValue("CLOUDINARY_API_KEY", null),
     CLOUDINARY_API_SECRET: getValue("CLOUDINARY_API_SECRET", null),
+    MAIL_USER: getValue("MAIL_USER", ""),
+    MAIL_PASS: getValue("MAIL_PASS", ""),
 };
