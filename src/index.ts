@@ -11,6 +11,7 @@ import { config } from "./utils/config";
 import { logger } from "./utils/logger";
 import { v2 as cloudinary } from "cloudinary";
 
+
 const app = express();
 const client = postgres(config.DATABASE_URL as string, {
   max: 10,
@@ -47,6 +48,9 @@ app.listen(config.PORT, () => {
 
 cloudinary.config({
   secure: true,
+  api_key: config.CLOUDINARY_API_KEY!,
+  api_secret: config.CLOUDINARY_API_SECRET!,
+  cloud_name: config.CLOUDINARY_CLOUD_NAME!,
 });
 
 export { database as db, cloudinary };

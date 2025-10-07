@@ -247,11 +247,11 @@ const HttpStatusCode: StatusCodes = {
     HTTP_INSUFFICIENT_STORAGE: {
         code: 507,
         message: "Insufficient Storage",
-    }, 
+    },
     HTTP_LOOP_DETECTED: {
         code: 508,
         message: "loop detected",
-    }, 
+    },
     HTTP_NOT_EXTENDED: {
         code: 510,
         message: "Not Extended",
@@ -265,6 +265,13 @@ const HttpStatusCode: StatusCodes = {
 enum Gender {
     MALE = 1,
     FEMALE = 2
+}
+
+enum User {
+    PATIENT = 1,
+    DOCTOR = 2,
+    HOSPITAL = 3,
+    ADMIN = 4
 }
 
 enum UserVerificationDocumentType {
@@ -289,6 +296,7 @@ enum AdminPrivilege {
 export {
     HttpStatusCode,
     Gender,
+    User,
     UserVerificationDocumentType,
     AccountStatus,
     AdminPrivilege

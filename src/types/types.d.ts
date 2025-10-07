@@ -5,7 +5,7 @@ declare global {
     interface Request {
       admin: IAdmin & {
         id: number;
-      },
+      }
     }
   }
 }

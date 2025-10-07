@@ -1,3 +1,5 @@
+// All user related input validations using Joi
+
 import joi from "joi";
 import { Gender, UserVerificationDocumentType } from "../utils/constants";
 
@@ -7,7 +9,7 @@ export const SignupUserValidator = joi.object({
     age: joi.number().integer().min(0).max(120).required(),
     gender: joi.number().valid(...Object.values(Gender)).required(),
     email: joi.string().email().max(100).required(),
-    phoneNumber: joi.string().min(1).max(14).required(),
+    phone: joi.string().min(1).max(14).required(),
     address: joi.string().min(2).max(200).required(),
     emergencyContactNumber: joi.string().min(2).max(100).required(),
     emergencyContactName: joi.string().min(1).max(14).required(),
@@ -20,11 +22,18 @@ export const SignupUserValidator = joi.object({
     familyMedicalHistory: joi.string().min(5).max(500).required(),
     pastMedicalHistory: joi.string().min(5).max(500).required(),
     // Verification and Identification
-    verificationDocumentType: joi.string().valid(...Object.values(UserVerificationDocumentType)).required(),
+    verificationDocumentType: joi.number().valid(...Object.values(UserVerificationDocumentType)).required(),
     verificationDocumentNumber: joi.string().max(25).required(),
     verificationDocumentURL: joi.string().uri().max(255).required(),
     // Security and Consent
-    password: joi.string().min(8).max(255).required(),
+    password: joi.string()
+        .min(8)
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).+$/)
+        .required()
+        .messages({
+            'string.pattern.base':
+                'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.',
+        }),
     treatmentConsent: joi.boolean().required(),
     healthInfoDisclosureConsent: joi.boolean().required(),
     privacyPolicyConsent: joi.boolean().required(),

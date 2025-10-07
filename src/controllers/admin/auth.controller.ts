@@ -1,18 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import {
-    LoginAdminValidator,
-    ForgotPasswordValidator,
-    ResetPasswordValidator,
-    changePasswordValidator
-} from "../../validators/admin.validators";
-import { AccountStatus, HttpStatusCode } from "../../utils/constants";
+import { AccountStatus, HttpStatusCode, User } from "../../utils/constants";
 import { db } from "../..";
 import { AdminTable } from "../../models/admin.model";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { generateJWT, sendEmail } from "../../utils";
 import { VerificationTable } from "../../models/verification.model";
 import { generate } from 'otp-generator';
+import { changePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator } from "../../validators";
 
 const {
     HTTP_OK,
@@ -22,7 +17,7 @@ const {
 
 const LoginAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = LoginAdminValidator.validate(req.body);
+        const { error, value } = LoginValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -83,7 +78,8 @@ const ForgotPasswordAdmin = async (req: Request, res: Response, next: NextFuncti
         await db.delete(VerificationTable).where(eq(VerificationTable.email, value.email));
         await db.insert(VerificationTable).values({
             email: value.email,
-            otp: otp
+            otp: otp,
+            userType: User.ADMIN,
         });
         sendEmail(
             admin[0].recoveryEmail ?? admin[0].email,
@@ -105,7 +101,15 @@ const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunctio
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
         }
-        const verification = await db.select().from(VerificationTable).where(eq(VerificationTable.email, value.email));
+        const verification = await db
+            .select()
+            .from(VerificationTable)
+            .where(
+                and(
+                    eq(VerificationTable.email, value.email),
+                    eq(VerificationTable.userType, User.ADMIN)
+                )
+            );
         if (verification.length === 0) {
             res.status(HTTP_NOT_FOUND.code).json({ error: "No OTP request found for this email" });
         }
@@ -139,7 +143,7 @@ const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunctio
 
 const ChangePasswordAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {id: adminId} = req.admin;
+        const { id: adminId } = req.admin;
         console.log(req.admin);
         const { error, value } = changePasswordValidator.validate(req.body);
         if (error) {
