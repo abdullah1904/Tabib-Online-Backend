@@ -1,4 +1,4 @@
-// All user related input validations using Joi
+// All user related input validations
 
 import joi from "joi";
 import { Gender, UserVerificationDocumentType } from "../utils/constants";
@@ -12,7 +12,7 @@ export const SignupUserValidator = joi.object({
     phone: joi.string().min(1).max(14).required(),
     address: joi.string().min(2).max(200).required(),
     emergencyContactNumber: joi.string().min(2).max(100).required(),
-    emergencyContactName: joi.string().min(1).max(14).required(),
+    emergencyContactName: joi.string().min(1).max(100).required(),
     // Medical and Health Information
     bloodType: joi.string().min(1).max(3).required(),
     height: joi.number().precision(2).min(0).required(),

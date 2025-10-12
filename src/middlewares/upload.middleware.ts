@@ -9,14 +9,14 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg/;
+    const fileTypes = /jpeg|jpg|png|heic|heif/;
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = fileTypes.test(file.mimetype);
 
     if (extname && mimetype) {
       cb(null, true);
     } else {
-      cb(new Error("Only JPEG images are allowed"));
+      cb(new Error("Only JPEG, PNG, HEIC, and HEIF images are allowed"));
     }
   },
 }).single("image");
@@ -33,7 +33,7 @@ export const uploadImageMiddleware =
         }
 
         if (!req.file) {
-          return next(new Error("No file uploaded"));
+          return next();
         }
         try {
           const uploadStream = cloudinary.uploader.upload_stream(

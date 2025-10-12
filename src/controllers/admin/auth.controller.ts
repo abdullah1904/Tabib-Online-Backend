@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AccountStatus, HttpStatusCode, User } from "../../utils/constants";
+import { AccountStatus, HttpStatusCode, UserType, VerificationType } from "../../utils/constants";
 import { db } from "../..";
 import { AdminTable } from "../../models/admin.model";
 import { and, eq } from "drizzle-orm";
@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { generateJWT, sendEmail } from "../../utils";
 import { VerificationTable } from "../../models/verification.model";
 import { generate } from 'otp-generator';
-import { changePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator } from "../../validators";
+import { ChangePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator } from "../../validators";
 
 const {
     HTTP_OK,
@@ -71,15 +71,22 @@ const ForgotPasswordAdmin = async (req: Request, res: Response, next: NextFuncti
         }
         const admin = await db.select().from(AdminTable).where(eq(AdminTable.email, value.email));
         if (admin.length === 0) {
-            res.status(HTTP_BAD_REQUEST.code).json({ error: "Admin with provided email does not exist" });
+            res.status(HTTP_NOT_FOUND.code).json({ error: "Admin with provided email does not exist" });
             return;
         }
         const otp = generate(6, { upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false });
-        await db.delete(VerificationTable).where(eq(VerificationTable.email, value.email));
+        await db.delete(VerificationTable).where(
+            and(
+                eq(VerificationTable.email, value.email),
+                eq(VerificationTable.userType, UserType.ADMIN),
+                eq(VerificationTable.verificationType, VerificationType.PASSWORD_RESET),
+            )
+        );
         await db.insert(VerificationTable).values({
             email: value.email,
             otp: otp,
-            userType: User.ADMIN,
+            userType: UserType.ADMIN,
+            verificationType: VerificationType.PASSWORD_RESET,
         });
         sendEmail(
             admin[0].recoveryEmail ?? admin[0].email,
@@ -107,7 +114,8 @@ const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunctio
             .where(
                 and(
                     eq(VerificationTable.email, value.email),
-                    eq(VerificationTable.userType, User.ADMIN)
+                    eq(VerificationTable.userType, UserType.ADMIN),
+                    eq(VerificationTable.verificationType, VerificationType.PASSWORD_RESET)
                 )
             );
         if (verification.length === 0) {
@@ -128,7 +136,13 @@ const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunctio
         const hashedPassword = await bcrypt.hash(value.newPassword, 10);
         await Promise.all([
             db.update(AdminTable).set({ password: hashedPassword }).where(eq(AdminTable.email, value.email)),
-            db.delete(VerificationTable).where(eq(VerificationTable.email, value.email))
+            db.delete(VerificationTable).where(
+                and(
+                    eq(VerificationTable.email, value.email),
+                    eq(VerificationTable.verificationType, VerificationType.PASSWORD_RESET),
+                    eq(VerificationTable.userType, UserType.ADMIN)
+                )
+            )
         ]);
         sendEmail(
             value.email,
@@ -145,7 +159,7 @@ const ChangePasswordAdmin = async (req: Request, res: Response, next: NextFuncti
     try {
         const { id: adminId } = req.admin;
         console.log(req.admin);
-        const { error, value } = changePasswordValidator.validate(req.body);
+        const { error, value } = ChangePasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;

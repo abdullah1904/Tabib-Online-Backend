@@ -9,6 +9,7 @@ import { AccountStatus, } from "../utils/constants";
 
 export const UserTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    imageURL: varchar({ length: 255 }),
     fullName: varchar({ length: 255 }).notNull(),
     age: integer().notNull(),
     gender: integer().notNull(),
@@ -25,7 +26,6 @@ export const UserTable = pgTable("users", {
     healthInfoDisclosureConsent: boolean().notNull(),
     privacyPolicyConsent: boolean().notNull(),
     status: integer().notNull().default(AccountStatus.PENDING),
-    activatedAt: timestamp({ withTimezone: true }),
     verifiedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())

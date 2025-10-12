@@ -267,8 +267,8 @@ enum Gender {
     FEMALE = 2
 }
 
-enum User {
-    PATIENT = 1,
+enum UserType {
+    USER = 1,
     DOCTOR = 2,
     HOSPITAL = 3,
     ADMIN = 4
@@ -287,6 +287,11 @@ enum AccountStatus {
     SUSPENDED = 3
 }
 
+enum VerificationType {
+    EMAIL_VERIFICATION = 1,
+    PASSWORD_RESET = 2
+}
+
 enum AdminPrivilege {
     SUPER = 1,
     WRITE = 2,
@@ -296,8 +301,9 @@ enum AdminPrivilege {
 export {
     HttpStatusCode,
     Gender,
-    User,
+    UserType,
     UserVerificationDocumentType,
     AccountStatus,
+    VerificationType,
     AdminPrivilege
 }

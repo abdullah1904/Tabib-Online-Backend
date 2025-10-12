@@ -1,5 +1,6 @@
 // All general and reusable input validations
 import joi from 'joi';
+import { VerificationType } from '../utils/constants';
 
 export const LoginValidator = joi.object({
     email: joi.string().email().max(100).required(),
@@ -15,6 +16,23 @@ export const LoginValidator = joi.object({
 
 export const ForgotPasswordValidator = joi.object({
     email: joi.string().email().max(100).required(),
+});
+
+export const SendOTPValidator = joi.object({
+    email: joi.string().email().max(100).required(),
+    verificationType: joi.number().valid(...Object.values(VerificationType)).optional(),
+});
+
+export const VerificationValidator = joi.object({
+    email: joi.string().email().max(100).required(),
+    otp: joi.string()
+        .pattern(/^\d{6}$/)
+        .required()
+        .messages({
+            "string.pattern.base": "OTP must be a 6 digit code",
+            "string.empty": "\"otp\" is required",
+            "any.required": "\"otp\" is required"
+        })
 });
 
 export const ResetPasswordValidator = joi.object({
@@ -37,7 +55,7 @@ export const ResetPasswordValidator = joi.object({
         }),
 });
 
-export const changePasswordValidator = joi.object({
+export const ChangePasswordValidator = joi.object({
     currentPassword: joi.string()
         .min(8)
         .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).+$/)
