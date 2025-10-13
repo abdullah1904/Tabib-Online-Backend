@@ -215,8 +215,8 @@ const LoginUser = async (req: Request, res: Response, next: NextFunction) => {
             res.status(HTTP_NOT_FOUND.code).json({ error: "Invalid email! User not found" });
             return;
         }
-        if (user[0].status === AccountStatus.DEACTIVATED || user[0].status === AccountStatus.SUSPENDED) {
-            res.status(HTTP_BAD_REQUEST.code).json({ error: "User account is deactivated or suspended. Please contact support." });
+        if (user[0].status === AccountStatus.BANNED || user[0].status === AccountStatus.SUSPENDED) {
+            res.status(HTTP_BAD_REQUEST.code).json({ error: "User account is banned or suspended. Please contact support." });
             return;
         }
         const isPasswordValid = await bcrypt.compare(value.password, user[0].password);

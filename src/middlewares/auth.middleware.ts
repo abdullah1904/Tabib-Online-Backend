@@ -1,14 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import { AccountStatus, HttpStatusCode } from "../utils/constants";
+import { AccountStatus, AdminPrivilege, HttpStatusCode } from "../utils/constants";
 import jwt from "jsonwebtoken";
 import { config } from "../utils/config";
 import { AdminTable } from "../models/admin.model";
 import { db } from "..";
 import { eq } from "drizzle-orm";
 import { UserTable } from "../models/user.model";
+import { error } from "console";
 
 const {
     HTTP_UNAUTHORIZED,
+    HTTP_FORBIDDEN,
+    HTTP_INTERNAL_SERVER_ERROR
 } = HttpStatusCode;
 
 const authenticateAdmin = async (req: Request, res: Response, next: NextFunction) => {
@@ -32,8 +35,8 @@ const authenticateAdmin = async (req: Request, res: Response, next: NextFunction
             res.status(HTTP_UNAUTHORIZED.code).json({ error: "Admin account is pending activation. Please contact support." });
             return;
         }
-        if(admin[0].status === AccountStatus.DEACTIVATED || admin[0].status === AccountStatus.SUSPENDED){
-            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Admin account is deactivated or suspended. Please contact support." });
+        if(admin[0].status === AccountStatus.BANNED || admin[0].status === AccountStatus.SUSPENDED){
+            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Admin account is suspended or banned. Please contact support." });
             return;
         }
         req.admin = {
@@ -77,8 +80,8 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
             res.status(HTTP_UNAUTHORIZED.code).json({ error: "User account is pending activation. Please contact support." });
             return;
         }
-        if(user[0].status === AccountStatus.DEACTIVATED || user[0].status === AccountStatus.SUSPENDED){
-            res.status(HTTP_UNAUTHORIZED.code).json({ error: "User account is deactivated or suspended. Please contact support." });
+        if(user[0].status === AccountStatus.SUSPENDED || user[0].status === AccountStatus.BANNED){
+            res.status(HTTP_UNAUTHORIZED.code).json({ error: "User account is suspended or banned. Please contact support." });
             return;
         }
         req.user = {
@@ -101,7 +104,26 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+const AuthorizeSuperOrReadAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.admin) {
+            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
+            return;
+        }
+        if (req.admin.privilegeLevel !== AdminPrivilege.SUPER && req.admin.privilegeLevel !== AdminPrivilege.READ) {
+            res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden: Insufficient privileges." });
+            return;
+        }
+        next();
+    }
+    catch (err) {
+        res.status(HTTP_INTERNAL_SERVER_ERROR.code).json({ error: HTTP_INTERNAL_SERVER_ERROR.message });
+        return;
+    }
+}
+
 export {
     authenticateAdmin,
-    authenticateUser
+    authenticateUser,
+    AuthorizeSuperOrReadAdmin
 }
