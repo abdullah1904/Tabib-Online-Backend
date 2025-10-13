@@ -34,8 +34,8 @@ const LoginAdmin = async (req: Request, res: Response, next: NextFunction) => {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "Admin account is pending activation. Please contact support." });
             return;
         }
-        if (admin[0].status === AccountStatus.DEACTIVATED || admin[0].status === AccountStatus.SUSPENDED) {
-            res.status(HTTP_BAD_REQUEST.code).json({ error: "Admin account is deactivated or suspended. Please contact support." });
+        if (admin[0].status === AccountStatus.BANNED || admin[0].status === AccountStatus.SUSPENDED) {
+            res.status(HTTP_BAD_REQUEST.code).json({ error: "Admin account is banned or suspended. Please contact support." });
             return;
         }
         const isPasswordValid = await bcrypt.compare(value.password, admin[0].password);
@@ -158,7 +158,6 @@ const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunctio
 const ChangePasswordAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: adminId } = req.admin;
-        console.log(req.admin);
         const { error, value } = ChangePasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });

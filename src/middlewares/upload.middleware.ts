@@ -22,7 +22,7 @@ const upload = multer({
 }).single("image");
 
 export const uploadImageMiddleware =
-  (uploadType: 'SIGN_UP') =>
+  (uploadType: 'SIGN_UP' | 'PROFILE_UPDATE') =>
     (req: Request, res: Response, next: NextFunction) => {
       upload(req, res, (err) => {
         if (err) {
@@ -44,6 +44,9 @@ export const uploadImageMiddleware =
               }
               if (uploadType === 'SIGN_UP') {
                 req.body.verificationDocumentURL = result.secure_url;
+              }
+              if (uploadType === 'PROFILE_UPDATE') {
+                req.body.imageURL = result.secure_url;
               }
 
               (req as any).uploadedFilePublicId = result.public_id;
@@ -67,7 +70,6 @@ export const uploadImageMiddleware =
 
           uploadStream.end(req.file.buffer);
         } catch (error) {
-          console.error("Upload error:", error);
           return next(new Error("Failed to upload image"));
         }
       });

@@ -110,8 +110,8 @@ const AuthorizeSuperOrReadAdmin = async (req: Request, res: Response, next: Next
             res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
             return;
         }
-        if (req.admin.privilegeLevel !== AdminPrivilege.SUPER && req.admin.privilegeLevel !== AdminPrivilege.READ) {
-            res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden: Insufficient privileges." });
+        if (req.admin.privilegeLevel !== AdminPrivilege.SUPER && req.admin.privilegeLevel !== AdminPrivilege.WRITE) {
+            res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
             return;
         }
         next();

@@ -8,6 +8,6 @@ adminUsersRouter.get("/", ListUsers);
 adminUsersRouter.get("/:id", GetUser);
 adminUsersRouter.patch("/:id/activate", AuthorizeSuperOrReadAdmin, ActivateUser);
 adminUsersRouter.patch("/:id/suspend", AuthorizeSuperOrReadAdmin, SuspendUser);
-adminUsersRouter.patch("/:id/banned", AuthorizeSuperOrReadAdmin, BannedUser);
+adminUsersRouter.patch("/:id/ban", AuthorizeSuperOrReadAdmin, BannedUser);
 
 export default adminUsersRouter;

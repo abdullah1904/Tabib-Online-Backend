@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken"
 import { config } from "./config"
-import {createTransport} from "nodemailer";
+import { createTransport } from "nodemailer";
 import { logger } from "./logger";
+import { cloudinary } from "..";
 
 const generateJWT = (id: number, type: "ACCESS" | "REFRESH") => {
     if (type === "ACCESS") {
@@ -9,6 +10,28 @@ const generateJWT = (id: number, type: "ACCESS" | "REFRESH") => {
     }
     else if (type === "REFRESH") {
         return jwt.sign({ id }, config.REFRESH_TOKEN_SECRET!, { expiresIn: config.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions)
+    }
+}
+
+const deleteCloudinaryImage = async (imageURL: string) => {
+    try {
+        const parts = imageURL.split("/upload/");
+        if (parts.length < 2) {
+            throw new Error("Invalid Cloudinary URL");
+        }
+
+        const pathAfterUpload = parts[1]
+            .split("/")
+            .filter((p) => !p.startsWith("v"))
+            .join("/")
+            .split(".")[0];
+
+        const publicId = pathAfterUpload;
+        await cloudinary.uploader.destroy(publicId);
+        logger.info("Cloudinary image deleted: " + publicId);
+    } catch (error) {
+        logger.error("Error deleting Cloudinary image: " + error);
+        throw error;
     }
 }
 
@@ -42,5 +65,6 @@ const sendEmail = async (to: string, subject: string, content: string) => {
 
 export {
     generateJWT,
+    deleteCloudinaryImage,
     sendEmail
 }

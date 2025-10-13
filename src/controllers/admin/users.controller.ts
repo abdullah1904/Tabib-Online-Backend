@@ -2,8 +2,7 @@ import { NextFunction, Request, Response, text } from "express";
 import { db } from "../..";
 import { UserTable } from "../../models/user.model";
 import { AccountStatus, HttpStatusCode } from "../../utils/constants";
-import { and, getTableColumns, ne } from "drizzle-orm";
-import { eq } from "drizzle-orm";
+import { and, getTableColumns, ne, ilike, or, eq } from "drizzle-orm";
 import { sendEmail } from "../../utils";
 
 const {
@@ -13,8 +12,23 @@ const {
 
 const ListUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const { query } = req.query;
         const { password, ...rest } = getTableColumns(UserTable);
-        const users = await db.select({ ...rest }).from(UserTable);
+        let users;
+        if (query) {
+            users = await db
+                .select({ ...rest })
+                .from(UserTable)
+                .where(or(
+                    ilike(UserTable.fullName, `%${query}%`),
+                    ilike(UserTable.email, `%${query}%`),
+                    ilike(UserTable.phoneNumber, `%${query}%`)
+                ))
+                .orderBy(UserTable.id);
+        }
+        else {
+            users = await db.select({ ...rest }).from(UserTable).orderBy(UserTable.id);
+        }
         res.status(HTTP_OK.code).json({
             message: "Users retrieved successfully",
             users
