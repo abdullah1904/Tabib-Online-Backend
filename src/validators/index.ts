@@ -20,7 +20,7 @@ export const ForgotPasswordValidator = joi.object({
 
 export const SendOTPValidator = joi.object({
     email: joi.string().email().max(100).required(),
-    verificationType: joi.number().valid(...Object.values(VerificationType)).optional(),
+    verificationType: joi.number().valid(...Object.values(VerificationType)).optional().default(VerificationType.EMAIL_VERIFICATION),
 });
 
 export const VerificationValidator = joi.object({

@@ -7,6 +7,8 @@ import bcrypt from "bcrypt";
 import { generateJWT, sendEmail } from "../../utils";
 import { VerificationTable } from "../../models/verification.model";
 import { generate } from 'otp-generator';
+import path from "path";
+import ejs from "ejs";
 import { ChangePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator } from "../../validators";
 
 const {
@@ -43,10 +45,17 @@ const LoginAdmin = async (req: Request, res: Response, next: NextFunction) => {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "Invalid password!" });
             return;
         }
+        const templateData = {
+            name: admin[0].fullName,
+            loginType: 'Admin',
+        }
+        const templatePath = path.join(process.cwd(), 'templates', `LoginAlertTemplate.ejs`);
+        console.log(process.cwd())
+        const mailContent = await ejs.renderFile(templatePath, templateData);
         sendEmail(
             admin[0].email,
             "New Login Alert - Tabib Online Admin",
-            `<p>Your account was just accessed. If this wasn't you, please contact support immediately.</p>`
+            mailContent
         )
         res.status(HTTP_OK.code).json({
             message: "Admin logged in successfully",

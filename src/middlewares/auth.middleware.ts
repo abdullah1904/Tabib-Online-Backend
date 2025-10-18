@@ -7,6 +7,7 @@ import { db } from "..";
 import { eq } from "drizzle-orm";
 import { UserTable } from "../models/user.model";
 import { error } from "console";
+import { DoctorTable } from "../models/doctor.model";
 
 const {
     HTTP_UNAUTHORIZED,
@@ -104,7 +105,52 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-const AuthorizeSuperOrReadAdmin = async (req: Request, res: Response, next: NextFunction) => {
+const authenticateDoctor = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let token;
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(" ")[1];
+        }
+        if (!token) {
+            res.status(HTTP_UNAUTHORIZED.code).json({ message: "Authorization token missing or malformed." });
+            return
+        }
+        const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET!) as {id: number};
+
+        const doctor = await db.select().from(DoctorTable).where(eq(DoctorTable.id, decoded.id));
+        if (doctor.length === 0) {
+            res.status(HTTP_UNAUTHORIZED.code).json({ message: "Doctor associated with credentials not found." });
+            return
+        }
+        if(doctor[0].status === AccountStatus.PENDING){
+            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Doctor account is pending activation. Please contact support." });
+            return;
+        }
+        if(doctor[0].status === AccountStatus.SUSPENDED || doctor[0].status === AccountStatus.BANNED){
+            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Doctor account is suspended or banned. Please contact support." });
+            return;
+        }
+        req.doctor = {
+            ...doctor[0],
+            id: doctor[0].id
+        }
+        next();
+    }
+    catch (err) {
+        if (err instanceof jwt.TokenExpiredError) {
+            res.status(HTTP_UNAUTHORIZED.code).json({ message: "Session expired. Please login again." });
+            return;
+        }
+        if (err instanceof jwt.JsonWebTokenError) {
+            res.status(HTTP_UNAUTHORIZED.code).json({ message: "Invalid session. Please login again." });
+            return;
+        }
+        res.status(HTTP_UNAUTHORIZED.code).json({ message: HTTP_UNAUTHORIZED.message, error: err });
+        return;
+    }
+}
+
+const AuthorizeSuperOrWriteAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.admin) {
             res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
@@ -125,5 +171,6 @@ const AuthorizeSuperOrReadAdmin = async (req: Request, res: Response, next: Next
 export {
     authenticateAdmin,
     authenticateUser,
-    AuthorizeSuperOrReadAdmin
+    authenticateDoctor,
+    AuthorizeSuperOrWriteAdmin
 }

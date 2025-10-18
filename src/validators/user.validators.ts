@@ -1,7 +1,7 @@
 // All user related input validations
 
 import joi from "joi";
-import { Gender, UserVerificationDocumentType } from "../utils/constants";
+import { Gender, VerificationDocumentType } from "../utils/constants";
 
 export const SignupUserValidator = joi.object({
     // Personal Information
@@ -22,7 +22,7 @@ export const SignupUserValidator = joi.object({
     familyMedicalHistory: joi.string().min(5).max(500).required(),
     pastMedicalHistory: joi.string().min(5).max(500).required(),
     // Verification and Identification
-    verificationDocumentType: joi.number().valid(...Object.values(UserVerificationDocumentType)).required(),
+    verificationDocumentType: joi.number().valid(...Object.values(VerificationDocumentType)).required(),
     verificationDocumentNumber: joi.string().max(25).required(),
     verificationDocumentURL: joi.string().uri().max(255).required(),
     // Security and Consent

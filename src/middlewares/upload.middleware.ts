@@ -19,12 +19,12 @@ const upload = multer({
       cb(new Error("Only JPEG, PNG, HEIC, and HEIF images are allowed"));
     }
   },
-}).single("image");
+});
 
 export const uploadImageMiddleware =
   (uploadType: 'SIGN_UP' | 'PROFILE_UPDATE') =>
     (req: Request, res: Response, next: NextFunction) => {
-      upload(req, res, (err) => {
+      upload.single("image")(req, res, (err) => {
         if (err) {
           if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
             return next(new Error("File size exceeds 5 MB"));
@@ -71,6 +71,110 @@ export const uploadImageMiddleware =
           uploadStream.end(req.file.buffer);
         } catch (error) {
           return next(new Error("Failed to upload image"));
+        }
+      });
+    };
+
+export const uploadMultipleImagesMiddleware =
+  (uploadType: 'DOCTOR_SIGNUP') =>
+    (req: Request, res: Response, next: NextFunction) => {
+      upload.fields([
+        { name: "image1", maxCount: 1 },
+        { name: "image2", maxCount: 1 }
+      ])(req, res, async (err) => {
+        if (err) {
+          if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+            return next(new Error("File size exceeds 5 MB"));
+          }
+          return next(err);
+        }
+
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+
+        if (!files || (!files.image1 && !files.image2)) {
+          return next();
+        }
+
+        try {
+          const uploadedPublicIds: string[] = [];
+          const uploadPromises: Promise<void>[] = [];
+
+          // Upload image1
+          if (files.image1 && files.image1[0]) {
+            const promise = new Promise<void>((resolve, reject) => {
+              const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: "tabib-online" },
+                (error, result) => {
+                  if (error || !result) {
+                    reject(new Error("Cloudinary upload failed for image1"));
+                  } else {
+                    // Set field names based on uploadType
+                    if (uploadType === 'DOCTOR_SIGNUP') {
+                      req.body.pmdcLicenseDocumentURL = result.secure_url;
+                    }
+                    uploadedPublicIds.push(result.public_id);
+                    resolve();
+                  }
+                }
+              );
+              uploadStream.end(files.image1[0].buffer);
+            });
+            uploadPromises.push(promise);
+          }
+
+          // Upload image2
+          if (files.image2 && files.image2[0]) {
+            const promise = new Promise<void>((resolve, reject) => {
+              const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: "tabib-online" },
+                (error, result) => {
+                  if (error || !result) {
+                    reject(new Error("Cloudinary upload failed for image2"));
+                  } else {
+                    // Set field names based on uploadType
+                    if (uploadType === 'DOCTOR_SIGNUP') {
+                      req.body.verificationDocumentURL = result.secure_url;
+                    }
+                    uploadedPublicIds.push(result.public_id);
+                    resolve();
+                  }
+                }
+              );
+              uploadStream.end(files.image2[0].buffer);
+            });
+            uploadPromises.push(promise);
+          }
+
+          // Wait for all uploads to complete
+          await Promise.all(uploadPromises);
+
+          (req as any).uploadedFilePublicIds = uploadedPublicIds;
+
+          // Hook cleanup on request end
+          const cleanup = async (err?: any) => {
+            if (err || res.statusCode >= 400) {
+              const publicIds = (req as any).uploadedFilePublicIds as string[];
+              if (publicIds && publicIds.length > 0) {
+                await Promise.all(
+                  publicIds.map(id => cloudinary.uploader.destroy(id).catch(() => { }))
+                );
+              }
+            }
+          };
+
+          res.on("finish", () => cleanup());
+          res.on("error", (err) => cleanup(err));
+
+          next();
+        } catch (error) {
+          // Clean up any uploaded files if there's an error
+          const publicIds = (req as any).uploadedFilePublicIds as string[];
+          if (publicIds && publicIds.length > 0) {
+            await Promise.all(
+              publicIds.map(id => cloudinary.uploader.destroy(id).catch(() => { }))
+            );
+          }
+          return next(new Error("Failed to upload images"));
         }
       });
     };
