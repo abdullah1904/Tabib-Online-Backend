@@ -6,6 +6,7 @@ import {
     boolean
 } from "drizzle-orm/pg-core";
 import { AccountStatus, } from "../utils/constants";
+import { relations } from "drizzle-orm";
 
 export const UserTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -29,4 +30,10 @@ export const UserTable = pgTable("users", {
     verifiedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
+});
+
+export const UserTableRelations = relations(UserTable, ({ one }) => {
+    return {
+        
+    }
 });

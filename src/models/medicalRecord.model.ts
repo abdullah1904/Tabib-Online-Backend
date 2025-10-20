@@ -6,6 +6,7 @@ import {
     timestamp
 } from "drizzle-orm/pg-core";
 import { UserTable } from "./user.model";
+import { relations } from "drizzle-orm";
 
 export const MedicalRecordTable = pgTable("medical_records", {
     bloodType: varchar({ length: 3 }).notNull(),
@@ -18,4 +19,13 @@ export const MedicalRecordTable = pgTable("medical_records", {
     user: integer().references(() => UserTable.id, { onDelete: 'cascade' }).notNull().unique(),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
+});
+
+export const MedicalRecordTableRelations = relations(MedicalRecordTable, ({ one }) => {
+    return {
+        user: one(UserTable, {
+            fields: [MedicalRecordTable.user],
+            references: [UserTable.id],
+        }),
+    }
 });

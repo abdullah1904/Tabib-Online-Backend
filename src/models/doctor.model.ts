@@ -27,6 +27,7 @@ export const DoctorTable = pgTable("doctors", {
     dataUsageConsentConsent: boolean().notNull(),
     status: integer().notNull().default(AccountStatus.PENDING),
     verifiedAt: timestamp({ withTimezone: true }),
+    pmdcVerifiedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
-})
+});

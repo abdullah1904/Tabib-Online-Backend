@@ -50,6 +50,13 @@
       "when": 1760731986763,
       "tag": "0006_equal_carmella_unuscione",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1760920522826,
+      "tag": "0007_lying_the_watchers",
+      "breakpoints": true
     }
   ]
 }
