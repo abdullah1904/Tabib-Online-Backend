@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { ActivateDoctor, BannedDoctor, GetDoctor, ListDoctors, SuspendDoctor } from "../../controllers/admin/doctors.controller";
+import { ActivateDoctorAdmin, BannedDoctorAdmin, GetDoctorAdmin, ListDoctorsAdmin, SuspendDoctorAdmin } from "../../controllers/admin/doctors.controller";
 import { AuthorizeSuperOrWriteAdmin } from "../../middlewares/auth.middleware";
 
 const adminDoctorsRouter = Router();
 
-adminDoctorsRouter.get("/", ListDoctors);
-adminDoctorsRouter.get("/:id", GetDoctor);
-adminDoctorsRouter.patch("/:id/activate", AuthorizeSuperOrWriteAdmin, ActivateDoctor);
-adminDoctorsRouter.patch("/:id/suspend", AuthorizeSuperOrWriteAdmin, SuspendDoctor);
-adminDoctorsRouter.patch("/:id/ban", AuthorizeSuperOrWriteAdmin, BannedDoctor);
+adminDoctorsRouter.get("/", ListDoctorsAdmin);
+adminDoctorsRouter.get("/:id", GetDoctorAdmin);
+adminDoctorsRouter.patch("/:id/activate", AuthorizeSuperOrWriteAdmin, ActivateDoctorAdmin);
+adminDoctorsRouter.patch("/:id/suspend", AuthorizeSuperOrWriteAdmin, SuspendDoctorAdmin);
+adminDoctorsRouter.patch("/:id/ban", AuthorizeSuperOrWriteAdmin, BannedDoctorAdmin);
 
 export default adminDoctorsRouter;

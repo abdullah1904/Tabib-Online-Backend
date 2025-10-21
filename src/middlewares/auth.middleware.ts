@@ -8,6 +8,8 @@ import { eq } from "drizzle-orm";
 import { UserTable } from "../models/user.model";
 import { error } from "console";
 import { DoctorTable } from "../models/doctor.model";
+import { MedicalRecordTable } from "../models/medicalRecord.model";
+import { logger } from "../utils/logger";
 
 const {
     HTTP_UNAUTHORIZED,
@@ -72,10 +74,16 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
         }
         const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET!) as {id: number};
 
-        const user = await db.select().from(UserTable).where(eq(UserTable.id, decoded.id));
+        const [user, medicalRecord] =  await Promise.all([
+            db.select().from(UserTable).where(eq(UserTable.id, decoded.id)),
+            db.select().from(MedicalRecordTable).where(eq(MedicalRecordTable.user, decoded.id))
+        ]);
         if (user.length === 0) {
             res.status(HTTP_UNAUTHORIZED.code).json({ message: "User associated with credentials not found." });
             return
+        }
+        if(medicalRecord.length === 0){
+            logger.error(`Medical record not found for user ID: ${decoded.id}`);
         }
         if(user[0].status === AccountStatus.PENDING){
             res.status(HTTP_UNAUTHORIZED.code).json({ error: "User account is pending activation. Please contact support." });
@@ -87,7 +95,14 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
         }
         req.user = {
             ...user[0],
-            id: user[0].id
+            id: user[0].id,
+            bloodType: medicalRecord[0].bloodType,
+            height: Number(medicalRecord[0].height),
+            weight: Number(medicalRecord[0].weight),
+            allergies: medicalRecord[0].allergies,
+            currentMedications: medicalRecord[0].currentMedications,
+            familyMedicalHistory: medicalRecord[0].familyMedicalHistory,
+            pastMedicalHistory: medicalRecord[0].pastMedicalHistory
         }
         next();
     }

@@ -10,7 +10,7 @@ const {
     HTTP_NOT_FOUND
 } = HttpStatusCode;
 
-const ListDoctors = async (req: Request, res: Response, next: NextFunction) => {
+const ListDoctorsAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { query } = req.query;
         const { password, ...rest } = getTableColumns(DoctorTable);
@@ -39,7 +39,7 @@ const ListDoctors = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const GetDoctor = async (req: Request, res: Response, next: NextFunction) => {
+const GetDoctorAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: doctorId } = req.params;
         const { password, ...rest } = getTableColumns(DoctorTable);
@@ -57,7 +57,7 @@ const GetDoctor = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const ActivateDoctor = async (req: Request, res: Response, next: NextFunction) => {
+const ActivateDoctorAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: userId } = req.params;
         const updatedUser = await db
@@ -86,7 +86,7 @@ const ActivateDoctor = async (req: Request, res: Response, next: NextFunction) =
     }
 }
 
-const SuspendDoctor = async (req: Request, res: Response, next: NextFunction) => {
+const SuspendDoctorAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: doctorId } = req.params;
         const updatedDoctor = await db
@@ -110,7 +110,7 @@ const SuspendDoctor = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
-const BannedDoctor = async (req: Request, res: Response, next: NextFunction) => {
+const BannedDoctorAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: doctorId } = req.params;
         const updatedDoctor = await db
@@ -135,9 +135,9 @@ const BannedDoctor = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 export {
-    ListDoctors,
-    GetDoctor,
-    ActivateDoctor,
-    SuspendDoctor,
-    BannedDoctor
+    ListDoctorsAdmin,
+    GetDoctorAdmin,
+    ActivateDoctorAdmin,
+    SuspendDoctorAdmin,
+    BannedDoctorAdmin
 }

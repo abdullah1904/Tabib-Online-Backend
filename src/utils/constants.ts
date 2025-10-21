@@ -403,6 +403,23 @@ enum Specialization {
     SexualHealthSpecialist = 58
 }
 
+enum DoctorPrefix {
+  Dr = 1,
+  Prof = 2,
+  ProfDr = 3,
+  MrDr = 4,
+  MsDr = 5,
+  MrsDr = 6,
+  MxDr = 7,
+  AssocProf = 8,
+  AsstProf = 9,
+  AssocProfDr = 10,
+  AsstProfDr = 11,
+  RevDr = 12,
+  Consultant = 13,
+  Surgeon = 14,
+}
+
 export {
     HttpStatusCode,
     Gender,
@@ -413,5 +430,6 @@ export {
     AdminPrivilege,
     MedicalDegree,
     PostGraduateDegree,
-    Specialization
+    Specialization,
+    DoctorPrefix
 }

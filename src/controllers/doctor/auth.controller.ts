@@ -334,7 +334,7 @@ const ResetPasswordDoctor = async (req: Request, res: Response, next: NextFuncti
 
 const ChangePasswordDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id: userId } = req.user;
+        const { id: userId } = req.doctor;
         const { error, value } = ChangePasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });

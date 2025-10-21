@@ -1,5 +1,5 @@
 import { integer, pgTable, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
-import { AccountStatus } from "../utils/constants";
+import { AccountStatus, DoctorPrefix } from "../utils/constants";
 
 export const DoctorTable = pgTable("doctors", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -28,6 +28,7 @@ export const DoctorTable = pgTable("doctors", {
     status: integer().notNull().default(AccountStatus.PENDING),
     verifiedAt: timestamp({ withTimezone: true }),
     pmdcVerifiedAt: timestamp({ withTimezone: true }),
+    doctorPrefix: integer().notNull().default(DoctorPrefix.Dr),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
 });

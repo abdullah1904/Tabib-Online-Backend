@@ -17,4 +17,11 @@ export const config = {
     CLOUDINARY_API_SECRET: getValue("CLOUDINARY_API_SECRET", null),
     MAIL_USER: getValue("MAIL_USER", ""),
     MAIL_PASS: getValue("MAIL_PASS", ""),
+    GROQ_API_KEY: getValue("GROQ_API_KEY", null),
+    GROQ_PRIMARY_MODEL: getValue("GROQ_PRIMARY_MODEL", "qwen/qwen3-32b"),
+    GROQ_SECONDARY_MODEL: getValue("GROQ_SECONDARY_MODEL", "openai/gpt-oss-20b"),
+    LANGSMITH_TRACING: getValue("LANGSMITH_TRACING", "false") === "true",
+    LANGSMITH_ENDPOINT: getValue("LANGSMITH_ENDPOINT", null),
+    LANGSMITH_API_KEY: getValue("LANGSMITH_API_KEY", null),
+    LANGSMITH_PROJECT: getValue("LANGSMITH_PROJECT", "default-project"),
 };

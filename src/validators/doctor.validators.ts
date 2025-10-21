@@ -1,7 +1,7 @@
 // All doctor related input validations
 
 import joi from "joi";
-import { Gender, MedicalDegree, PostGraduateDegree, Specialization, VerificationDocumentType } from "../utils/constants";
+import { DoctorPrefix, Gender, MedicalDegree, PostGraduateDegree, Specialization, VerificationDocumentType } from "../utils/constants";
 
 export const SignupDoctorValidator = joi.object({
     // Personal Information
@@ -53,4 +53,20 @@ export const SignupDoctorValidator = joi.object({
     licenseVerificationConsent: joi.boolean().required(),
     termsAgreementConsent: joi.boolean().required(),
     dataUsageConsentConsent: joi.boolean().required(),
+});
+
+export const updatePersonalProfileDoctorValidator = joi.object({
+    fullName: joi.string().max(100).required(),
+    imageURL: joi.string().uri().max(255).optional(),
+    age: joi.number().integer().min(0).max(120).required(),
+    gender: joi.number().valid(...Object.values(Gender)).required(),
+    address: joi.string().min(2).max(200).required(),
+});
+
+export const updateProfessionalProfileDoctorValidator = joi.object({
+    doctorPrefix: joi.number().valid(...Object.values(DoctorPrefix)).required(),
+    medicalDegree: joi.number().valid(...Object.values(MedicalDegree)).required(),
+    postGraduateDegree: joi.number().valid(...Object.values(PostGraduateDegree)).required(),
+    specialization: joi.number().valid(...Object.values(Specialization)).required(),
+    yearsOfExperience: joi.number().integer().min(0).max(80).required(),
 });

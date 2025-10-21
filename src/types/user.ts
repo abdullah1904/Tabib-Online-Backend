@@ -1,5 +1,6 @@
 export interface IUser {
     fullName: string;
+    imageURL: string | null;
     age: number;
     gender: number;
     email: string;
@@ -7,6 +8,13 @@ export interface IUser {
     phoneNumber: string;
     emergencyContactNumber: string;
     emergencyContactName: string;
+    bloodType: string;
+    height: number;
+    weight: number;
+    allergies: string;
+    currentMedications: string;
+    familyMedicalHistory: string;
+    pastMedicalHistory: string;
     verificationDocumentType: number;
     verificationDocumentNumber: string;
     verificationDocumentURL: string;

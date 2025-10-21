@@ -57,6 +57,13 @@
       "when": 1760920522826,
       "tag": "0007_lying_the_watchers",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1761048648770,
+      "tag": "0008_nasty_blade",
+      "breakpoints": true
     }
   ]
 }
