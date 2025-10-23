@@ -9,6 +9,7 @@ import { UserTable } from "./user.model";
 import { relations } from "drizzle-orm";
 
 export const MedicalRecordTable = pgTable("medical_records", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
     bloodType: varchar({ length: 3 }).notNull(),
     height: numeric({ precision: 5, scale: 2 }).notNull(),
     weight: numeric({ precision: 5, scale: 2 }).notNull(),

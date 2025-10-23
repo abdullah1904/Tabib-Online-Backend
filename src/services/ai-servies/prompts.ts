@@ -1,23 +1,6 @@
-import { ChatGroq } from "@langchain/groq";
-import { z } from "zod";
-import { config } from "../utils/config";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import {RunnableSequence} from "@langchain/core/runnables";
+import { ChatPromptTemplate, PromptTemplate } from "@langchain/core/prompts";
 
-const responseSchema = z.object({
-    primary: z.number().describe("Primary doctor specialization ID based on medical history"),
-    primaryReasons: z.string().describe("Reasons for recommending the primary doctor specialization"),
-    secondary: z.number().describe("Secondary doctor specialization ID for additional care"),
-    secondaryReasons: z.string().describe("Reasons for recommending the secondary doctor specialization")
-});
-
-const model = new ChatGroq({
-    model: config.GROQ_SECONDARY_MODEL,
-    temperature: 0.3,
-    maxTokens: 512
-}).withStructuredOutput(responseSchema);
-
-const SYSTEM_PROMPT = `You are an expert medical triage assistant. Your task is to analyze a patient's medical profile and recommend the most appropriate doctor specializations they should consult.
+const MATCHING_SYSTEM_PROMPT = `You are an expert medical triage assistant. Your task is to analyze a patient's medical profile and recommend the most appropriate doctor specializations they should consult.
 
 Based on the patient's:
 - Allergens
@@ -99,10 +82,10 @@ Guidelines:
 - Ensure primary and secondary specializations are different
 - Use only the numeric IDs in your response`;
 
-const prompt = ChatPromptTemplate.fromMessages([
-    { role: "system", content: SYSTEM_PROMPT },
-    {
-        role: "user", content: `Patient Medical Profile:
+export const matchingPrompt = ChatPromptTemplate.fromMessages([
+  { role: "system", content: MATCHING_SYSTEM_PROMPT },
+  {
+    role: "user", content: `Patient Medical Profile:
         - Past Medical History: {pastMedicalHistory}    
         - Allergies: {allergies}
         - Current Medications: {currentMedications}
@@ -110,16 +93,15 @@ const prompt = ChatPromptTemplate.fromMessages([
     `}
 ]);
 
-const recommendMatchesChain = RunnableSequence.from([
-    prompt,
-    model
-]);
+export const reviewPrompt = PromptTemplate.fromTemplate(`You are a medical review analyzer. Given a patient's review of a doctor, extract the rating they provided on a scale from 1 to 5.
 
-export const recommendDoctorMatches = async ({ pastMedicalHistory, allergies, currentMedications, familyMedicalHistory }: { pastMedicalHistory: string, allergies: string, currentMedications: string, familyMedicalHistory: string }) => {
-    return await recommendMatchesChain.invoke({
-        pastMedicalHistory,
-        allergies,
-        currentMedications,
-        familyMedicalHistory
-    });
-}
+Guidelines:
+- The rating must be an integer between 1 and 5
+- If the review does not contain a clear rating, infer the most appropriate rating based on the sentiment of the review
+- Respond ONLY with the numeric rating, without any additional text or explanation
+
+Patient Review:
+{review}
+
+Rating:
+`);
