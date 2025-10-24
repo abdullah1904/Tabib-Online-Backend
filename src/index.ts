@@ -10,6 +10,10 @@ import postgres from "postgres";
 import { config } from "./utils/config";
 import { logger } from "./utils/logger";
 import { v2 as cloudinary } from "cloudinary";
+import { createServer } from 'http';
+import { Server } from "socket.io";
+import { chatServiceStream } from "./services/ai-servies/chatbot.service";
+import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./services/socket.service";
 
 
 const app = express();
@@ -42,7 +46,28 @@ app.use(loggingMiddleware);
 app.use("/api/v1", appRouter);
 app.use(errorMiddleware);
 
-app.listen(config.PORT, () => {
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // Sockets only for User Panel
+  }
+});
+
+io.on("connection", (socket) => {
+  const userId = socket.handshake.query.userId as string;
+  onConnectionHandler(socket, userId);
+  
+  // Handle incoming messages from clients
+  socket.on("message", async ({ query }) => {
+    await onMessageHandler(socket, userId, query);
+  });
+  // Handle client disconnection
+  socket.on("disconnect", () => {
+    onDisconnectHandler(socket, userId);
+  });
+});
+
+server.listen(config.PORT, () => {
   logger.info(`Server is running on port ${config.PORT}`);
 });
 
@@ -53,4 +78,4 @@ cloudinary.config({
   cloud_name: config.CLOUDINARY_CLOUD_NAME!,
 });
 
-export { database as db, cloudinary };
+export { database as db, cloudinary, io };

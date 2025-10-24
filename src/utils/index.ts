@@ -63,8 +63,15 @@ const sendEmail = async (to: string, subject: string, content: string) => {
     }
 }
 
+const removeThinking = (text: string) => {
+  if (!text) return "";
+  // Removes <think>...</think> blocks (including newlines)
+  return text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+};
+
 export {
     generateJWT,
     deleteCloudinaryImage,
-    sendEmail
+    sendEmail,
+    removeThinking
 }
