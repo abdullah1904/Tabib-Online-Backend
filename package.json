@@ -28,6 +28,7 @@
     "@langchain/community": "^1.0.0",
     "@langchain/core": "^1.0.1",
     "@langchain/groq": "^1.0.0",
+    "@langchain/langgraph": "^1.0.1",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
@@ -58,8 +59,14 @@
     "@types/node": "^24.3.1",
     "@types/nodemailer": "^7.0.2",
     "@types/otp-generator": "^4.0.2",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.31.5",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.9",
+      "@esbuild-kit/esm-loader": "npm:tsx@^4.20.4"
+    }
   }
 }
