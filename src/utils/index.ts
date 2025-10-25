@@ -13,6 +13,25 @@ const generateJWT = (id: number, type: "ACCESS" | "REFRESH") => {
     }
 }
 
+const getCloudinaryFolderName = (type: 'SIGN_UP' | 'PROFILE_UPDATE')=>{
+    let folder = "tabib-online";
+    if (type === 'SIGN_UP') {
+        folder = "tabib-online/user-verifications-document";
+    }
+    if (type === 'PROFILE_UPDATE') {
+        folder = "tabib-online/profile-images";
+    }
+    return folder;
+}
+
+const getCloudinaryFoldersNames = (type: 'DOCTOR_SIGNUP') => {
+    let folders = ["tabib-online", "tabib-online"];
+    if (type === 'DOCTOR_SIGNUP') {
+        folders = ["tabib-online/doctor-licenses-document", "tabib-online/doctor-verifications-document"];
+    }
+    return folders;
+}
+
 const deleteCloudinaryImage = async (imageURL: string) => {
     try {
         const parts = imageURL.split("/upload/");
@@ -71,6 +90,8 @@ const removeThinking = (text: string) => {
 
 export {
     generateJWT,
+    getCloudinaryFolderName,
+    getCloudinaryFoldersNames,
     deleteCloudinaryImage,
     sendEmail,
     removeThinking

@@ -38,3 +38,23 @@ export const SignupUserValidator = joi.object({
     healthInfoDisclosureConsent: joi.boolean().required(),
     privacyPolicyConsent: joi.boolean().required(),
 });
+
+export const updatePersonalProfileUserValidator = joi.object({
+    imageURL: joi.string().uri().max(255).optional(),
+    fullName: joi.string().max(100).required(),
+    age: joi.number().integer().min(0).max(120).required(),
+    gender: joi.number().valid(...Object.values(Gender)).required(),
+    address: joi.string().min(2).max(200).required(),
+    emergencyContactNumber: joi.string().min(2).max(100).required(),
+    emergencyContactName: joi.string().min(1).max(100).required(),
+});
+
+export const updateMedicalRecordUserValidator = joi.object({
+    bloodType: joi.string().min(1).max(3).required(),
+    height: joi.number().precision(2).min(0).required(),
+    weight: joi.number().precision(2).min(0).required(),
+    allergies: joi.string().min(5).max(500).required(),
+    currentMedications: joi.string().min(5).max(500).required(),
+    familyMedicalHistory: joi.string().min(5).max(500).required(),
+    pastMedicalHistory: joi.string().min(5).max(500).required(),
+});

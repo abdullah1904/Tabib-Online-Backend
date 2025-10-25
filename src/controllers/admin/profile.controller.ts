@@ -11,7 +11,7 @@ const {
     HTTP_BAD_REQUEST
 } = HttpStatusCode;
 
-const updateProfileAdmin = async (req: Request, res: Response, next: NextFunction) => {
+const UpdateProfileAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: adminId, imageURL: adminImageURL } = req.admin;
         const { error, value } = updateProfileAdminValidator.validate(req.body);
@@ -23,7 +23,7 @@ const updateProfileAdmin = async (req: Request, res: Response, next: NextFunctio
         const updatedProfile = await db.update(AdminTable).set({
             fullName: value.fullName,
             recoveryEmail: value.recoveryEmail,
-            imageURL: value.imageURL || null,
+            imageURL: value.imageURL || adminImageURL || null,
         }).where(eq(AdminTable.id, adminId)).returning();
 
         if (updatedProfile.length === 0) {
@@ -43,5 +43,5 @@ const updateProfileAdmin = async (req: Request, res: Response, next: NextFunctio
 }
 
 export {
-    updateProfileAdmin
+    UpdateProfileAdmin
 }

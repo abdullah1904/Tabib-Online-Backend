@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import { cloudinary } from "..";
+import { getCloudinaryFolderName, getCloudinaryFoldersNames } from "../utils";
 
 const storage = multer.memoryStorage();
 
@@ -35,9 +36,10 @@ export const uploadImageMiddleware =
         if (!req.file) {
           return next();
         }
+        const folderName = getCloudinaryFolderName(uploadType);
         try {
           const uploadStream = cloudinary.uploader.upload_stream(
-            { folder: "tabib-online" },
+            { folder: folderName },
             (error, result) => {
               if (error || !result) {
                 return next(new Error("Cloudinary upload failed"));
@@ -95,6 +97,8 @@ export const uploadMultipleImagesMiddleware =
           return next();
         }
 
+        const folders = getCloudinaryFoldersNames(uploadType);
+
         try {
           const uploadedPublicIds: string[] = [];
           const uploadPromises: Promise<void>[] = [];
@@ -103,7 +107,7 @@ export const uploadMultipleImagesMiddleware =
           if (files.image1 && files.image1[0]) {
             const promise = new Promise<void>((resolve, reject) => {
               const uploadStream = cloudinary.uploader.upload_stream(
-                { folder: "tabib-online" },
+                { folder: folders[0] },
                 (error, result) => {
                   if (error || !result) {
                     reject(new Error("Cloudinary upload failed for image1"));
@@ -126,7 +130,7 @@ export const uploadMultipleImagesMiddleware =
           if (files.image2 && files.image2[0]) {
             const promise = new Promise<void>((resolve, reject) => {
               const uploadStream = cloudinary.uploader.upload_stream(
-                { folder: "tabib-online" },
+                { folder: folders[1] },
                 (error, result) => {
                   if (error || !result) {
                     reject(new Error("Cloudinary upload failed for image2"));

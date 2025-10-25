@@ -11,7 +11,7 @@ const {
     HTTP_BAD_REQUEST,
 } = HttpStatusCode;
 
-const updatePersonalProfileDoctor = async (req: Request, res: Response, next: NextFunction) => {
+const UpdatePersonalProfileDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: doctorId, imageURL: doctorImageURL } = req.doctor;
         const { error, value } = updatePersonalProfileDoctorValidator.validate(req.body);
@@ -21,7 +21,7 @@ const updatePersonalProfileDoctor = async (req: Request, res: Response, next: Ne
         }
         const updatedProfile = await db.update(DoctorTable).set({
             fullName: value.fullName,
-            imageURL: value.imageURL || null,
+            imageURL: value.imageURL || doctorImageURL || null,
             age: value.age,
             address: value.address,
             gender: value.gender
@@ -41,7 +41,7 @@ const updatePersonalProfileDoctor = async (req: Request, res: Response, next: Ne
     }
 }
 
-const updateProfessionalProfileDoctor = async (req: Request, res: Response, next: NextFunction) => {
+const UpdateProfessionalProfileDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: doctorId } = req.doctor;
         const { error, value } = updateProfessionalProfileDoctorValidator.validate(req.body);
@@ -68,6 +68,6 @@ const updateProfessionalProfileDoctor = async (req: Request, res: Response, next
 }
 
 export {
-    updatePersonalProfileDoctor,
-    updateProfessionalProfileDoctor
+    UpdatePersonalProfileDoctor,
+    UpdateProfessionalProfileDoctor
 }
