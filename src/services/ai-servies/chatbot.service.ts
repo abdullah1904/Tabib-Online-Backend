@@ -1,15 +1,28 @@
-import { ChatGroq, ChatGroqCallOptions } from "@langchain/groq";
+import { ChatGroq } from "@langchain/groq";
 import { config } from "../../utils/config";
 import { StateGraph, START, END, Annotation } from "@langchain/langgraph";
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
 import { MemorySaver } from "@langchain/langgraph";
 import { removeThinking } from "../../utils";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { chatbotPrompt } from "./prompts";
+import { medicalKnowledgeSearchTool } from "./tools";
+import {ToolNode, toolsCondition} from "@langchain/langgraph/prebuilt";
+
+const tools = [
+    medicalKnowledgeSearchTool,
+]
 
 const model = new ChatGroq({
     model: config.GROQ_PRIMARY_MODEL,
-    temperature: 0.3,
-    maxTokens: 512,
-});
+    temperature: 0.1,
+    maxTokens: 4096,
+}).bindTools(tools);
+
+const chatbotChain = RunnableSequence.from([
+    chatbotPrompt,
+    model
+]);
 
 const StateAnnotation = Annotation.Root({
     messages: Annotation<BaseMessage[]>({
@@ -26,20 +39,24 @@ const StateAnnotation = Annotation.Root({
 const graphBuilder = new StateGraph(StateAnnotation);
 
 const chatNode = async (state: typeof StateAnnotation.State) => {
-    const response = await model.invoke(state.messages, {
-        reasoning_format: 'hidden',
+    const response = await chatbotChain.invoke({
+        question: state.messages,
     });
     return {
         messages: [response],
     };
 };
 
+const toolNode = new ToolNode(tools);
+
 const checkpointer = new MemorySaver();
 
 const graph = graphBuilder
     .addNode("chatNode", chatNode)
+    .addNode("tools", toolNode)
     .addEdge(START, "chatNode")
-    .addEdge("chatNode", END)
+    .addConditionalEdges("chatNode", toolsCondition)
+    .addEdge("tools", "chatNode") 
     .compile({ checkpointer });
 
 export const chatServiceStream = async (message: string, thread_id: string) => {
@@ -48,7 +65,7 @@ export const chatServiceStream = async (message: string, thread_id: string) => {
     }
     return graph.stream({
         messages: [new HumanMessage(message)]
-    }, config);
+    },config);
 }
 
 export const chatHistoryService = async (thread_id: string) => {

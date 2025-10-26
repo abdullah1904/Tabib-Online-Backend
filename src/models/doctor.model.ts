@@ -1,7 +1,7 @@
 import { integer, pgTable, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
 import { AccountStatus, DoctorPrefix } from "../utils/constants";
 import { relations } from "drizzle-orm";
-import { DoctorReviewTable } from "./doctorReviews.model";
+import { DoctorReviewTable } from "./doctorReview.model";
 
 export const DoctorTable = pgTable("doctors", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),

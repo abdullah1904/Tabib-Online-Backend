@@ -1,7 +1,7 @@
 // All doctor related input validations
 
 import joi from "joi";
-import { DoctorPrefix, Gender, MedicalDegree, PostGraduateDegree, Specialization, VerificationDocumentType } from "../utils/constants";
+import { DoctorPrefix, DoctorServiceDuration, DoctorServiceType, Gender, MedicalDegree, PostGraduateDegree, Specialization, VerificationDocumentType } from "../utils/constants";
 
 export const SignupDoctorValidator = joi.object({
     // Personal Information
@@ -69,4 +69,18 @@ export const updateProfessionalProfileDoctorValidator = joi.object({
     postGraduateDegree: joi.number().valid(...Object.values(PostGraduateDegree)).required(),
     specialization: joi.number().valid(...Object.values(Specialization)).required(),
     yearsOfExperience: joi.number().integer().min(0).max(80).required(),
+});
+
+export const doctorServiceValidator = joi.object({
+    title: joi.string().max(100).required(),
+    description: joi.string().max(500).required(),
+    type: joi.number().valid(...Object.values(DoctorServiceType)).required(),
+    duration: joi.number().valid(...Object.values(DoctorServiceDuration)).required(),
+    price: joi.number().integer().min(0).required(),
+    availability: joi.date().required(),
+    location: joi.string().max(200).when('type', {
+        is: DoctorServiceType.IN_PERSON,
+        then: joi.required(),
+        otherwise: joi.optional()
+    })
 });

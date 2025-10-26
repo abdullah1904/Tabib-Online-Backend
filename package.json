@@ -25,7 +25,8 @@
   },
   "homepage": "https://github.com/abdullah1904/Tabib-Online-Backend#readme",
   "dependencies": {
-    "@langchain/community": "^1.0.0",
+    "@huggingface/inference": "^4.13.0",
+    "@langchain/cohere": "^1.0.0",
     "@langchain/core": "^1.0.1",
     "@langchain/groq": "^1.0.0",
     "@langchain/langgraph": "^1.0.1",

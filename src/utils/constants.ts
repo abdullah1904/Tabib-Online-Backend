@@ -420,6 +420,18 @@ enum DoctorPrefix {
   Surgeon = 14,
 }
 
+enum DoctorServiceType {
+    IN_PERSON = 1,
+    AUDIO_CALL = 2,
+    VIDEO_CALL = 3,
+}
+
+enum DoctorServiceDuration {
+    MIN_30 = 1,
+    MIN_45 = 2,
+    MIN_60 = 3,
+}
+
 export {
     HttpStatusCode,
     Gender,
@@ -431,5 +443,7 @@ export {
     MedicalDegree,
     PostGraduateDegree,
     Specialization,
-    DoctorPrefix
+    DoctorPrefix,
+    DoctorServiceType,
+    DoctorServiceDuration
 }
