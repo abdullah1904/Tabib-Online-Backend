@@ -18,3 +18,16 @@ export const reviewResponseSchema = z.object({
     )
     .describe("Rating given to the doctor"),
 });
+
+export const verificationStateSchema = z.object({
+    doctorName: z.string().describe("Full name of the doctor as per PMDC records."),
+    registrationNumber: z.string().describe("PMDC registration number of the doctor."),
+    registrationDate: z.string().describe("Date when the doctor was registered with PMDC."),
+    specialization: z.string().describe("Medical specialization of the doctor."),
+    medicalDegree: z.string().describe("Medical degree obtained by the doctor."),
+    postGraduateDegree: z.string().describe("Postgraduate degree obtained by the doctor."),
+});
+
+export const verificationResponseSchema = z.object({
+  status: z.enum(["verified", "not_verified", "pending"]).describe("Verification status of the doctor"),
+});

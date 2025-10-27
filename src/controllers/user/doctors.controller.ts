@@ -8,7 +8,7 @@ import { DoctorReviewTable } from "../../models/doctorReview.model";
 import { CommentValidator } from "../../validators";
 import { reviewRatings } from "../../services/ai-servies/review.service";
 import { UserTable } from "../../models/user.model";
-import { DoctorServiceTable } from "../../models/doctorService.model";
+import { DoctorServiceAvailabilityTable, DoctorServiceTable } from "../../models/doctorService.model";
 
 const {
     HTTP_OK,
@@ -92,7 +92,8 @@ const GetDoctorUser = async (req: Request, res: Response, next: NextFunction) =>
         if (doctor.length === 0) {
             return res.status(HTTP_NOT_FOUND.code).json({ error: "Doctor not found" });
         }
-        const [reviews, services] = await Promise.all([
+
+        const [reviews, services, serviceDays] = await Promise.all([
             db.select({
                 id: DoctorReviewTable.id,
                 ratings: DoctorReviewTable.ratings,
@@ -103,16 +104,33 @@ const GetDoctorUser = async (req: Request, res: Response, next: NextFunction) =>
                 .from(DoctorReviewTable)
                 .leftJoin(UserTable, eq(DoctorReviewTable.user, UserTable.id))
                 .where(eq(DoctorReviewTable.doctor, Number(doctorId))),
+            
             db.select()
                 .from(DoctorServiceTable)
+                .where(eq(DoctorServiceTable.doctor, Number(doctorId))),
+            
+            db.select({
+                service: DoctorServiceAvailabilityTable.service,
+                dayOfWeek: DoctorServiceAvailabilityTable.dayOfWeek
+            })
+                .from(DoctorServiceAvailabilityTable)
+                .innerJoin(DoctorServiceTable, eq(DoctorServiceAvailabilityTable.service, DoctorServiceTable.id))
                 .where(eq(DoctorServiceTable.doctor, Number(doctorId)))
         ]);
+
+        const servicesWithDays = services.map(service => ({
+            ...service,
+            availableDays: serviceDays
+                .filter(day => day.service === service.id)
+                .map(day => day.dayOfWeek)
+        }));
+
         res.status(HTTP_OK.code).json({
             message: "Doctor retrieved successfully",
             doctor: {
                 ...doctor[0],
                 reviews,
-                services
+                services: servicesWithDays
             }
         });
     }

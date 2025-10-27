@@ -1,5 +1,5 @@
 import { integer, pgTable, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
-import { AccountStatus, DoctorPrefix } from "../utils/constants";
+import { AccountStatus, DoctorApplicationStatus, DoctorPrefix } from "../utils/constants";
 import { relations } from "drizzle-orm";
 import { DoctorReviewTable } from "./doctorReview.model";
 
@@ -31,6 +31,15 @@ export const DoctorTable = pgTable("doctors", {
     verifiedAt: timestamp({ withTimezone: true }),
     pmdcVerifiedAt: timestamp({ withTimezone: true }),
     doctorPrefix: integer().notNull().default(DoctorPrefix.Dr),
+    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
+});
+
+export const DoctorVerificationApplications = pgTable("doctor_verification_applications", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    doctorId: integer().notNull().references(() => DoctorTable.id, { onDelete: "cascade" }),
+    status: integer().notNull().default(DoctorApplicationStatus.PENDING),
+    reviewedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
 });

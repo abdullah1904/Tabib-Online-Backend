@@ -420,6 +420,14 @@ enum DoctorPrefix {
   Surgeon = 14,
 }
 
+enum DoctorApplicationStatus {
+    PENDING = 0,
+    VERIFIED = 1,
+    NOT_VERIFIED = 2,
+    NOT_FOUND = 3,
+    ERROR = 4
+}
+
 enum DoctorServiceType {
     IN_PERSON = 1,
     AUDIO_CALL = 2,
@@ -430,6 +438,16 @@ enum DoctorServiceDuration {
     MIN_30 = 1,
     MIN_45 = 2,
     MIN_60 = 3,
+}
+
+enum DayOfWeek {
+    SUNDAY = 0,
+    MONDAY = 1,
+    TUESDAY = 2,
+    WEDNESDAY = 3,
+    THURSDAY = 4,
+    FRIDAY = 5,
+    SATURDAY = 6,   
 }
 
 export {
@@ -444,6 +462,8 @@ export {
     PostGraduateDegree,
     Specialization,
     DoctorPrefix,
+    DoctorApplicationStatus,
     DoctorServiceType,
-    DoctorServiceDuration
+    DoctorServiceDuration,
+    DayOfWeek
 }

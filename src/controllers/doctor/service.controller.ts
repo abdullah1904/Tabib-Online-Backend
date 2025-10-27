@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { doctorServiceValidator } from "../../validators/doctor.validators";
 import { HttpStatusCode } from "../../utils/constants";
 import { db } from "../..";
-import { and, eq } from "drizzle-orm";
-import { DoctorServiceTable } from "../../models/doctorService.model";
+import { and, eq, inArray } from "drizzle-orm";
+import { DoctorServiceAvailabilityTable, DoctorServiceTable } from "../../models/doctorService.model";
 
 const {
     HTTP_OK,
@@ -26,7 +26,7 @@ const CreateServiceDoctor = async (req: Request, res: Response, next: NextFuncti
                 eq(DoctorServiceTable.doctor, doctorId),
                 eq(DoctorServiceTable.type, value.type),
                 eq(DoctorServiceTable.duration, value.duration),
-                eq(DoctorServiceTable.availability, value.availability)
+                eq(DoctorServiceTable.time, value.time)
             ));
         if (alreadyService.length > 0) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "A similar service already exists." });
@@ -38,11 +38,22 @@ const CreateServiceDoctor = async (req: Request, res: Response, next: NextFuncti
             type: value.type,
             price: value.price,
             duration: value.duration,
-            availability: value.availability,
+            time: value.time,
             location: value.location,
             doctor: doctorId
         }).returning();
-        res.status(HTTP_CREATED.code).json({ message: "Service created successfully", service: newService[0] });
+
+        const daysToInsert = value.availableDays.map((dayOfWeek: number) => ({
+            service: newService[0].id,
+            dayOfWeek: dayOfWeek
+        }));
+
+        await db.insert(DoctorServiceAvailabilityTable).values(daysToInsert);
+
+        res.status(HTTP_CREATED.code).json({ message: "Service created successfully", service: {
+            ...newService[0],
+            availableDays: value.availableDays
+        } });
     }
     catch (error) {
         next(error);
@@ -52,10 +63,30 @@ const CreateServiceDoctor = async (req: Request, res: Response, next: NextFuncti
 const ListServicesDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: doctorId } = req.doctor;
+        
         const services = await db.select()
             .from(DoctorServiceTable)
             .where(eq(DoctorServiceTable.doctor, doctorId));
-        res.status(HTTP_OK.code).json({ message: "Services retrieved successfully", services });
+
+        const serviceIds = services.map(s => s.id);
+        
+        const days = serviceIds.length > 0 
+            ? await db.select()
+                .from(DoctorServiceAvailabilityTable)
+                .where(inArray(DoctorServiceAvailabilityTable.service, serviceIds))
+            : [];
+
+        const servicesWithDays = services.map(service => ({
+            ...service,
+            availableDays: days
+                .filter(day => day.service === service.id)
+                .map(day => day.dayOfWeek)
+        }));
+
+        res.status(HTTP_OK.code).json({ 
+            message: "Services retrieved successfully", 
+            services: servicesWithDays 
+        });
     }
     catch (error) {
         next(error);

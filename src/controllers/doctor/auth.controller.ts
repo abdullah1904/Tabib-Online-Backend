@@ -9,6 +9,7 @@ import { VerificationTable } from "../../models/verification.model";
 import { generate } from "otp-generator";
 import { generateJWT, sendEmail } from "../../utils";
 import { ChangePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator, SendOTPValidator, VerificationValidator } from "../../validators";
+import { verificationAgent } from "../../services/ai-servies/verification.service";
 
 const {
     HTTP_OK,
