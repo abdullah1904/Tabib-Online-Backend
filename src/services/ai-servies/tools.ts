@@ -1,14 +1,28 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
+import {CohereEmbeddings} from "@langchain/cohere";
 import { config } from "../../utils/config";
+import {QdrantVectorStore} from "@langchain/qdrant";
+import { logger } from "../../utils/logger";
+import { Document } from "langchain";
 
+const embeddings = new CohereEmbeddings({
+    model: config.COHERE_EMBEDDING_MODEL,
+});
+
+const vectorStore = new QdrantVectorStore(embeddings,{
+    apiKey: config.QDRANT_API_KEY!,
+    collectionName: config.QDRANT_COLLECTION_NAME!,
+    url: config.QDRANT_URL!,
+    contentPayloadKey: "page_content",  // Add this
+    metadataPayloadKey: "metadata",
+});
 
 export const medicalKnowledgeSearchTool = tool(
     async ({ query }: { query: string }) => {
-        // const store = await getVectorStore();
-        // const context = await (store as any).similaritySearch(query, 5);
-        // const context_text = (context as any[]).map((doc: any) => doc.pageContent).join("\n\n");
-        return "have not implemented yet";
+        const context = await vectorStore.similaritySearch(query, 5);
+        const context_text = context.map((doc: Document) => doc.pageContent).join("\n\n");
+        return context_text;
     },
     {
         name: "MedicalKnowledgeSearch",
@@ -21,7 +35,6 @@ export const medicalKnowledgeSearchTool = tool(
 
 export const getDoctorInfoTool = tool(
     async ({ registrationNo }) => {
-
         try {
             if (!registrationNo || registrationNo.trim() === '') {
                 throw new Error("Invalid registration number provided.");

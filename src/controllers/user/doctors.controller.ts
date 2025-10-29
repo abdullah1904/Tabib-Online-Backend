@@ -180,7 +180,6 @@ const ReviewDoctorUser = async (req: Request, res: Response, next: NextFunction)
         });
     }
     catch (error) {
-        console.error("Error occurred while reviewing doctor:", error);
         next(error);
     }
 }

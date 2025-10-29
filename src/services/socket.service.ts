@@ -30,7 +30,7 @@ export const onMessageHandler = async (socket: Socket, userId: string, query: st
             const lastMessage = chunk.tools.messages[chunk.tools.messages.length - 1];
             if (lastMessage instanceof ToolMessage) {
                 const tool_name = lastMessage.name || "tool";
-                socket.emit("toolCall", { content: tool_name });
+                socket.emit("toolCall", { toolName: tool_name });
             }
         }
         

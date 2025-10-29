@@ -34,12 +34,12 @@ const CreateServiceDoctor = async (req: Request, res: Response, next: NextFuncti
         }
         const newService = await db.insert(DoctorServiceTable).values({
             title: value.title,
-            description: value.description,
             type: value.type,
             price: value.price,
             duration: value.duration,
             time: value.time,
             location: value.location,
+            allowCustom: value.allowCustom,
             doctor: doctorId
         }).returning();
 

@@ -113,6 +113,20 @@
       "when": 1761526541027,
       "tag": "0015_brief_stryfe",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1761760525658,
+      "tag": "0016_redundant_red_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1761762285470,
+      "tag": "0017_complete_imperial_guard",
+      "breakpoints": true
     }
   ]
 }

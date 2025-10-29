@@ -50,7 +50,6 @@ const LoginAdmin = async (req: Request, res: Response, next: NextFunction) => {
             loginType: 'Admin',
         }
         const templatePath = path.join(process.cwd(), 'templates', `LoginAlertTemplate.ejs`);
-        console.log(process.cwd())
         const mailContent = await ejs.renderFile(templatePath, templateData);
         sendEmail(
             admin[0].email,
