@@ -1,56 +1,77 @@
-# ===============================
-# 1️⃣ Build Stage
-# ===============================
-FROM node:22-alpine AS builder
+FROM node:22-alpine
 
-# Enable pnpm
+# Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-# Copy dependency files
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install all dependencies (dev + prod)
+# Install all dependencies (including dev dependencies for building)
 RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Build the project
+# Build TypeScript to JavaScript
 RUN pnpm run build
 
-# ===============================
-# 2️⃣ Runtime Stage
-# ===============================
-FROM node:22-alpine
+# Remove dev dependencies to reduce image size
+RUN pnpm prune --prod
 
-# Enable pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Declare build arguments
+ARG PORT
+ARG DATABASE_URL
+ARG ACCESS_TOKEN_SECRET
+ARG ACCESS_TOKEN_EXPIRY
+ARG REFRESH_TOKEN_SECRET
+ARG REFRESH_TOKEN_EXPIRY
+ARG CLOUDINARY_CLOUD_NAME
+ARG CLOUDINARY_API_KEY
+ARG CLOUDINARY_API_SECRET
+ARG MAIL_USER
+ARG MAIL_PASS
+ARG GROQ_API_KEY
+ARG GROQ_PRIMARY_MODEL
+ARG GROQ_SECONDARY_MODEL
+ARG QDRANT_URL
+ARG QDRANT_API_KEY
+ARG QDRANT_COLLECTION_NAME
+ARG COHERE_API_KEY
+ARG COHERE_EMBEDDING_MODEL
+ARG LANGSMITH_TRACING
+ARG LANGSMITH_ENDPOINT
+ARG LANGSMITH_API_KEY
+ARG LANGSMITH_PROJECT
 
-WORKDIR /app
+# Set environment variables
+ENV PORT=${PORT}
+ENV DATABASE_URL=${DATABASE_URL}
+ENV ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+ENV ACCESS_TOKEN_EXPIRY=${ACCESS_TOKEN_EXPIRY}
+ENV REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+ENV REFRESH_TOKEN_EXPIRY=${REFRESH_TOKEN_EXPIRY}
+ENV CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+ENV CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+ENV CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+ENV MAIL_USER=${MAIL_USER}
+ENV MAIL_PASS=${MAIL_PASS}
+ENV GROQ_API_KEY=${GROQ_API_KEY}
+ENV GROQ_PRIMARY_MODEL=${GROQ_PRIMARY_MODEL}
+ENV GROQ_SECONDARY_MODEL=${GROQ_SECONDARY_MODEL}
+ENV QDRANT_URL=${QDRANT_URL}
+ENV QDRANT_API_KEY=${QDRANT_API_KEY}
+ENV QDRANT_COLLECTION_NAME=${QDRANT_COLLECTION_NAME}
+ENV COHERE_API_KEY=${COHERE_API_KEY}
+ENV COHERE_EMBEDDING_MODEL=${COHERE_EMBEDDING_MODEL}
+ENV LANGSMITH_TRACING=${LANGSMITH_TRACING}
+ENV LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
+ENV LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+ENV LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
 
-# Copy dependency files
-COPY package.json pnpm-lock.yaml ./
+# Expose port
+EXPOSE ${PORT}
 
-# Install only production dependencies
-RUN pnpm install --prod --frozen-lockfile
-
-# Copy built files
-COPY --from=builder /app/dist ./dist
-
-# ===============================
-# Environment configuration
-# ===============================
-
-# Default port
-ENV PORT=3004
-
-# You can still override any of these at runtime with -e VAR=value
-ENV NODE_ENV=production
-
-# Expose the app port
-EXPOSE 3004
-
-# Start the app
-CMD ["node", "dist/index.js"]
+# Start the application
+CMD ["node", "index.js"]
