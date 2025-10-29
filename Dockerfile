@@ -1,16 +1,41 @@
-# Production stage
-FROM node:22-alpine
+# Build stage
+FROM node:22-alpine AS builder
 
+# Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
+# Install all dependencies (including dev dependencies for building)
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build TypeScript to JavaScript
+RUN pnpm run build
+
+# Production stage
+FROM node:22-alpine
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install only production dependencies
 RUN pnpm install --prod --frozen-lockfile
 
+# Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
 
+# Declare build arguments
 ARG PORT
 ARG DATABASE_URL
 ARG ACCESS_TOKEN_SECRET
@@ -35,6 +60,7 @@ ARG LANGSMITH_ENDPOINT
 ARG LANGSMITH_API_KEY
 ARG LANGSMITH_PROJECT
 
+# Set environment variables
 ENV PORT=${PORT}
 ENV DATABASE_URL=${DATABASE_URL}
 ENV ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
@@ -59,6 +85,8 @@ ENV LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
 ENV LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
 ENV LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
 
+# Expose port
 EXPOSE ${PORT}
 
+# Start the application
 CMD ["node", "dist/index.js"]
