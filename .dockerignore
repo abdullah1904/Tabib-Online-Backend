@@ -1,9 +1,0 @@
-node_modules
-.pnpm-store
-npm-debug.log
-.git
-.gitignore
-.env
-dist
-*.md
-.github
