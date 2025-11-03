@@ -127,6 +127,20 @@
       "when": 1761762285470,
       "tag": "0017_complete_imperial_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1761971776171,
+      "tag": "0018_spotty_kat_farrell",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1762116215146,
+      "tag": "0019_outgoing_quicksilver",
+      "breakpoints": true
     }
   ]
 }

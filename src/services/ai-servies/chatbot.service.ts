@@ -7,16 +7,17 @@ import { removeThinking } from "../../utils";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { chatbotPrompt } from "./prompts";
 import { medicalKnowledgeSearchTool } from "./tools";
-import {ToolNode, toolsCondition} from "@langchain/langgraph/prebuilt";
+import { ToolNode, toolsCondition } from "@langchain/langgraph/prebuilt";
+import { logger } from "../../utils/logger";
 
 const tools = [
     medicalKnowledgeSearchTool,
-]
+];
 
 const model = new ChatGroq({
-    model: config.GROQ_PRIMARY_MODEL,
+    model: config.GROQ_SECONDARY_MODEL,
     temperature: 0.1,
-    maxTokens: 4096,
+    maxTokens: 2048
 }).bindTools(tools);
 
 const chatbotChain = RunnableSequence.from([
@@ -34,60 +35,110 @@ const StateAnnotation = Annotation.Root({
         },
         default: () => [],
     }),
+    recursionDepth: Annotation<number>({
+        reducer: (left, right) => (right !== undefined ? right : left),
+        default: () => 0,
+    }),
 });
 
-const graphBuilder = new StateGraph(StateAnnotation);
+const MAX_RECURSION_DEPTH = 5;
+const MAX_HISTORY_LENGTH = 5;
 
 const chatNode = async (state: typeof StateAnnotation.State) => {
+    const recentMessages = state.messages.slice(-MAX_HISTORY_LENGTH);
+    
     const response = await chatbotChain.invoke({
-        question: state.messages,
+        question: recentMessages,
     });
+        
     return {
         messages: [response],
+        recursionDepth: state.recursionDepth + 1,
     };
 };
 
 const toolNode = new ToolNode(tools);
 
+const shouldContinue = (state: typeof StateAnnotation.State) => {
+    const lastMessage = state.messages[state.messages.length - 1];
+    if (state.recursionDepth >= MAX_RECURSION_DEPTH) {
+        logger.warn(`Max recursion depth (${MAX_RECURSION_DEPTH}) reached. Stopping.`);
+        return END;
+    }
+    if (lastMessage instanceof AIMessage && lastMessage.tool_calls?.length) {
+        return "tools";
+    }
+    return END;
+};
+
 const checkpointer = new MemorySaver();
+
+const graphBuilder = new StateGraph(StateAnnotation);
 
 const graph = graphBuilder
     .addNode("chatNode", chatNode)
     .addNode("tools", toolNode)
     .addEdge(START, "chatNode")
-    .addConditionalEdges("chatNode", toolsCondition)
-    .addEdge("tools", "chatNode") 
+    .addConditionalEdges("chatNode", shouldContinue)
+    .addEdge("tools", "chatNode")
     .compile({ checkpointer });
 
 export const chatServiceStream = async (message: string, thread_id: string) => {
-    const config = {
-        'configurable': { 'thread_id': thread_id }
+    try {
+        const trimmedMessage = message.length > 4000 
+            ? message.substring(0, 4000) + "... (message truncated)"
+            : message;
+
+        return graph.stream(
+            {
+                messages: [new HumanMessage(trimmedMessage)],
+                recursionDepth: 0,
+            },
+            {
+                configurable: { thread_id },
+                recursionLimit: MAX_RECURSION_DEPTH,
+            }
+        );
+    } catch (error) {
+        logger.error("Error in chatServiceStream:", error);
+        throw error;
     }
-    return graph.stream({
-        messages: [new HumanMessage(message)]
-    },config);
-}
+};
 
 export const chatHistoryService = async (thread_id: string) => {
     const config = {
-        'configurable': { 'thread_id': thread_id }
-    }
-    const state = await graph.getState(config);
-    const messages = [];
-    for (const msg of state.values.messages || []) {
-        if (msg instanceof HumanMessage) {
-            messages.push({
-                id: msg.id,
-                role: 'HumanMessage',
-                content: msg.content
-            });
+        configurable: { thread_id }
+    };
+    
+    try {
+        const state = await graph.getState(config);
+        const messages = [];
+        
+        const recentMessages = (state.values.messages || []).slice(-MAX_HISTORY_LENGTH);
+        
+        for (const msg of recentMessages) {
+            if (msg instanceof HumanMessage) {
+                messages.push({
+                    id: msg.id,
+                    role: 'HumanMessage',
+                    content: typeof msg.content === 'string' 
+                        ? msg.content 
+                        : JSON.stringify(msg.content)
+                });
+            } else if (msg instanceof AIMessage) {
+                const content = msg.content as string;
+                if (content && content.trim()) {
+                    messages.push({
+                        role: 'AIMessage',
+                        content: removeThinking(content)
+                    });
+                }
+            }
         }
-        else if (msg instanceof AIMessage) {
-            messages.push({
-                role: 'AIMessage',
-                content: removeThinking(msg.content as string)
-            });
-        }
+        
+        return messages;
+    } catch (error) {
+        console.error("Error in chatHistoryService:", error);
+        return [];
     }
-    return messages;
-}
+};

@@ -8,6 +8,7 @@ function getValue<T>(key: string, defaultValue: T) {
 export const config = {
     PORT: getValue("PORT", null), 
     DATABASE_URL: getValue("DATABASE_URL", null),
+    REDIS_URL: getValue("REDIS_URL", null),
     ACCESS_TOKEN_SECRET: getValue("ACCESS_TOKEN_SECRET", null),
     ACCESS_TOKEN_EXPIRY: getValue("ACCESS_TOKEN_EXPIRY", null),
     REFRESH_TOKEN_SECRET: getValue("REFRESH_TOKEN_SECRET", null),

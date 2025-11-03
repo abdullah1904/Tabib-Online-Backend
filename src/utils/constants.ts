@@ -404,28 +404,27 @@ enum Specialization {
 }
 
 enum DoctorPrefix {
-  Dr = 1,
-  Prof = 2,
-  ProfDr = 3,
-  MrDr = 4,
-  MsDr = 5,
-  MrsDr = 6,
-  MxDr = 7,
-  AssocProf = 8,
-  AsstProf = 9,
-  AssocProfDr = 10,
-  AsstProfDr = 11,
-  RevDr = 12,
-  Consultant = 13,
-  Surgeon = 14,
+    Dr = 1,
+    Prof = 2,
+    ProfDr = 3,
+    MrDr = 4,
+    MsDr = 5,
+    MrsDr = 6,
+    MxDr = 7,
+    AssocProf = 8,
+    AsstProf = 9,
+    AssocProfDr = 10,
+    AsstProfDr = 11,
+    RevDr = 12,
+    Consultant = 13,
+    Surgeon = 14,
 }
 
 enum DoctorApplicationStatus {
     PENDING = 0,
-    VERIFIED = 1,
-    NOT_VERIFIED = 2,
-    NOT_FOUND = 3,
-    ERROR = 4
+    IN_PROGRESS = 1,
+    COMPLETED = 2,
+    ERROR = 3,
 }
 
 enum DoctorServiceType {
@@ -447,8 +446,13 @@ enum DayOfWeek {
     WEDNESDAY = 3,
     THURSDAY = 4,
     FRIDAY = 5,
-    SATURDAY = 6,   
+    SATURDAY = 6,
 }
+
+enum VerificationHandlerType {
+    AGENT = 1,
+    WORKER = 2,
+} 
 
 export {
     HttpStatusCode,
@@ -465,5 +469,6 @@ export {
     DoctorApplicationStatus,
     DoctorServiceType,
     DoctorServiceDuration,
-    DayOfWeek
+    DayOfWeek,
+    VerificationHandlerType
 }

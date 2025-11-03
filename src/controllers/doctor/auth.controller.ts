@@ -214,6 +214,10 @@ const LoginDoctor = async (req: Request, res: Response, next: NextFunction) => {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "Doctor account is banned or suspended. Please contact support." });
             return;
         }
+        if(doctor[0].suspendedTill && doctor[0].suspendedTill > new Date()) {
+            res.status(HTTP_BAD_REQUEST.code).json({ error: "Doctor account is suspended until " + doctor[0].suspendedTill });
+            return;
+        }
         const isPasswordValid = await bcrypt.compare(value.password, doctor[0].password);
         if (!isPasswordValid) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "Invalid password!" });

@@ -12,7 +12,6 @@ import { logger } from "./utils/logger";
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from 'http';
 import { Server } from "socket.io";
-import { chatServiceStream } from "./services/ai-servies/chatbot.service";
 import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./services/socket.service";
 
 

@@ -29,6 +29,7 @@ export const DoctorTable = pgTable("doctors", {
     dataUsageConsentConsent: boolean().notNull(),
     status: integer().notNull().default(AccountStatus.PENDING),
     verifiedAt: timestamp({ withTimezone: true }),
+    suspendedTill: timestamp({ withTimezone: true }),
     pmdcVerifiedAt: timestamp({ withTimezone: true }),
     doctorPrefix: integer().notNull().default(DoctorPrefix.Dr),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -37,9 +38,11 @@ export const DoctorTable = pgTable("doctors", {
 
 export const DoctorVerificationApplications = pgTable("doctor_verification_applications", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    doctorId: integer().notNull().references(() => DoctorTable.id, { onDelete: "cascade" }),
+    doctor: integer().notNull().references(() => DoctorTable.id, { onDelete: "cascade" }),
     status: integer().notNull().default(DoctorApplicationStatus.PENDING),
     reviewedAt: timestamp({ withTimezone: true }),
+    reviewedBy: integer(),
+    results: varchar({ length: 1000 }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())
 });

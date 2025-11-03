@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const matchingResponseSchema = z.object({
-    primary: z.number().describe("Primary doctor specialization ID based on medical history"),
-    primaryReasons: z.string().describe("Reasons for recommending the primary doctor specialization"),
-    secondary: z.number().describe("Secondary doctor specialization ID for additional care"),
-    secondaryReasons: z.string().describe("Reasons for recommending the secondary doctor specialization")
+  primary: z.number().describe("Primary doctor specialization ID based on medical history"),
+  primaryReasons: z.string().describe("Reasons for recommending the primary doctor specialization"),
+  secondary: z.number().describe("Secondary doctor specialization ID for additional care"),
+  secondaryReasons: z.string().describe("Reasons for recommending the secondary doctor specialization")
 });
 
 export const reviewResponseSchema = z.object({
@@ -20,14 +20,21 @@ export const reviewResponseSchema = z.object({
 });
 
 export const verificationStateSchema = z.object({
-    doctorName: z.string().describe("Full name of the doctor as per PMDC records."),
-    registrationNumber: z.string().describe("PMDC registration number of the doctor."),
-    registrationDate: z.string().describe("Date when the doctor was registered with PMDC."),
-    specialization: z.string().describe("Medical specialization of the doctor."),
-    medicalDegree: z.string().describe("Medical degree obtained by the doctor."),
-    postGraduateDegree: z.string().describe("Postgraduate degree obtained by the doctor."),
+  doctorName: z.string().describe("Full name of the doctor as per PMDC records."),
+  registrationNumber: z.string().describe("PMDC registration number of the doctor."),
+  registrationDate: z.string().describe("Date when the doctor was registered with PMDC in YYYY-MM-DD format."),
+  specialization: z.string().describe("Medical specialization of the doctor."),
+  medicalDegree: z.string().describe("Medical degree obtained by the doctor."),
+  postGraduateDegree: z.string().describe("Postgraduate degree obtained by the doctor."),
 });
 
 export const verificationResponseSchema = z.object({
-  status: z.enum(["verified", "not_verified", "pending"]).describe("Verification status of the doctor"),
+  status: z.enum([
+    "VALID_INFORMATION",
+    "INVALID_INFORMATION",
+    "INCOMPLETE_INFORMATION",
+    "NOT_FOUND",
+    "ERROR"
+  ]).describe("Verification status of the doctor"),
+  reason: z.string().describe("Detailed reason for the verification status assigned to the doctor."),
 });

@@ -145,6 +145,10 @@ const authenticateDoctor = async (req: Request, res: Response, next: NextFunctio
             res.status(HTTP_UNAUTHORIZED.code).json({ error: "Doctor account is suspended or banned. Please contact support." });
             return;
         }
+        if(doctor[0].suspendedTill && doctor[0].suspendedTill > new Date()) {
+            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Doctor account is suspended until " + doctor[0].suspendedTill });
+            return;
+        }
         req.doctor = {
             ...doctor[0],
             id: doctor[0].id
