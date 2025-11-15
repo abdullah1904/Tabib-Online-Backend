@@ -38,9 +38,7 @@ jobs:
           script: |
             mkdir -p ~/tabib_online_backend
             
-            cat > ~/tabib_online_backend/.env << 'EOF'
-            ${{ secrets.ENV_FILE }}
-            EOF
+            printf '%s\n' '${{ secrets.ENV_FILE }}' > ~/tabib_online_backend/.env
             
             docker pull ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
             docker stop tabib_online_backend || true
