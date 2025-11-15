@@ -1,16 +1,18 @@
 FROM node:22-alpine
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY pnpm-lock.yaml ./
 
-RUN yarn install --frozen-lockfile
+RUN pnpm install
 
 COPY . .
 
-RUN yarn build
+RUN pnpm build
 
-RUN yarn install --production --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile
 
 EXPOSE 3004
 
