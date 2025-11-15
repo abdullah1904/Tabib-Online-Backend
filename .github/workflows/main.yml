@@ -38,14 +38,39 @@ jobs:
           script: |
             mkdir -p ~/tabib_online_backend
             
-            printf '%s\n' '${{ secrets.ENV_FILE }}' > ~/tabib_online_backend/.env
+            # Create .env file with proper escaping
+            cat > ~/tabib_online_backend/.env << 'ENVEOF'
+            ${{ secrets.ENV_FILE }}
+            ENVEOF
             
+            # Verify .env file was created
+            echo "Environment file created with $(wc -l < ~/tabib_online_backend/.env) lines"
+            
+            # Pull latest image
             docker pull ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
+            
+            # Stop and remove old container
             docker stop tabib_online_backend || true
             docker rm tabib_online_backend || true
+            
+            # Cleanup old images
+            docker image prune -f
 
+            # Run new container with .env file
             docker run -d \
               --name tabib_online_backend \
               -p 3004:3004 \
               --env-file ~/tabib_online_backend/.env \
+              --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
+            
+            # Show container status
+            sleep 10
+            docker ps -a | grep tabib_online_backend
+            
+            # Show logs if container failed
+            if [ "$(docker inspect -f '{{.State.Running}}' tabib_online_backend)" != "true" ]; then
+              echo "Container failed to start. Logs:"
+              docker logs tabib_online_backend
+              exit 1
+            fi
