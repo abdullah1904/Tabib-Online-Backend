@@ -1,17 +1,23 @@
 FROM node:22-alpine
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+# Copy package files
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
 
-RUN pnpm install
+# Install pnpm and dependencies
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
 
+# Copy application code
 COPY . .
 
+# Build the application
 RUN pnpm build
 
-RUN pnpm install --prod --frozen-lockfile
-
+# Expose port
 EXPOSE 3004
 
+# The .env file will be mounted at runtime
 CMD ["node", "dist/src/index.js"]
