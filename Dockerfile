@@ -20,4 +20,4 @@ RUN pnpm build
 EXPOSE 3004
 
 # The .env file will be mounted at runtime
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "app/dist/src/index.js"]
