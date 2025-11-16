@@ -90,7 +90,7 @@ const deleteCloudinaryImage = async (imageURL: string) => {
 
 const sendEmail = async (to: string, subject: string, content: string) => {
     try {
-        const resend = new Resend(config.RESEND_API_KEY);
+        const resend = new Resend(config.RESEND_API_KEY!);
         
         const { data, error } = await resend.emails.send({
             from: 'Tabib Online <onboarding@resend.dev>',
