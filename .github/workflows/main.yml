@@ -22,8 +22,6 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
-
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -38,39 +36,16 @@ jobs:
           script: |
             mkdir -p ~/tabib_online_backend
             
-            cat > ~/tabib_online_backend/.env << 'ENVEOF'
-            ${{ secrets.ENV_FILE }}
-            ENVEOF
+            echo "${{ secrets.ENV_FILE }}" | base64 -d > ~/tabib_online_backend/.env
             
-            echo "Environment file created with $(wc -l < ~/tabib_online_backend/.env) lines"
-            echo "First variable check:"
-            head -n 1 ~/tabib_online_backend/.env | cut -d'=' -f1
-            
-            chmod 600 ~/tabib_online_backend/.env
-            
-            docker pull ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
             
             docker stop tabib_online_backend || true
             docker rm tabib_online_backend || true
-            
             docker image prune -f
+            docker pull ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
 
             docker run -d \
               --name tabib_online_backend \
               -p 3004:3004 \
-              -v ~/tabib_online_backend/.env:/app/.env:ro \
-              --restart unless-stopped \
+              --env-file ~/tabib_online_backend/.env \
               ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
-            
-            sleep 5
-            
-            echo "Checking if .env file is mounted in container:"
-            docker exec tabib_online_backend ls -lh /app/.env || echo ".env file not found in container!"
-            
-            docker ps -a | grep tabib_online_backend
-            
-            if [ "$(docker inspect -f '{{.State.Running}}' tabib_online_backend)" != "true" ]; then
-              echo "Container failed to start. Logs:"
-              docker logs tabib_online_backend
-              exit 1
-            fi

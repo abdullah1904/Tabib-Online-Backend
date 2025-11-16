@@ -19,5 +19,5 @@ RUN pnpm build
 # Expose port
 EXPOSE 3004
 
-# The .env file will be mounted at runtime
+# Start the application
 CMD ["node", "app/dist/src/index.js"]
