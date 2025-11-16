@@ -57,11 +57,16 @@ const deleteCloudinaryImage = async (imageURL: string) => {
 const sendEmail = async (to: string, subject: string, content: string) => {
     try {
         const transporter = createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
             auth: {
                 user: config.MAIL_USER,
                 pass: config.MAIL_PASS
-            }
+            },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000,
         });
 
         const mailOptions = {
@@ -73,7 +78,7 @@ const sendEmail = async (to: string, subject: string, content: string) => {
             subject: subject,
             html: content
         };
-        transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
         logger.info("Email sent to " + to);
     }
     catch (err) {

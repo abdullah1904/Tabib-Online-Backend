@@ -23,6 +23,7 @@ const client = postgres(config.DATABASE_URL as string, {
 });
 const database = drizzle(client);
 
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
