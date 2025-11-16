@@ -18,6 +18,7 @@ export const config = {
     CLOUDINARY_API_SECRET: getValue("CLOUDINARY_API_SECRET", null),
     MAIL_USER: getValue("MAIL_USER", ""),
     MAIL_PASS: getValue("MAIL_PASS", ""),
+    RESEND_API_KEY: getValue("RESEND_API_KEY", null),
     GROQ_API_KEY: getValue("GROQ_API_KEY", null),
     GROQ_PRIMARY_MODEL: getValue("GROQ_PRIMARY_MODEL", "qwen/qwen3-32b"),
     GROQ_SECONDARY_MODEL: getValue("GROQ_SECONDARY_MODEL", "openai/gpt-oss-20b"),
