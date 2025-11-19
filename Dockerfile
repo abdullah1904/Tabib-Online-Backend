@@ -8,9 +8,6 @@ COPY pnpm-lock.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
 
-RUN pnpm db:generate
-RUN pnpm db:migrate
-
 COPY . .
 
 RUN pnpm build
