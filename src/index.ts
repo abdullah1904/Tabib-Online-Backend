@@ -33,6 +33,10 @@ app.use(cors({
     'http://localhost:3001', // Doctor Panel
     'http://localhost:3002', // Hospital Panel
     'http://localhost:3003', // Admin Panel
+    'https://tabibonline.app', // User Panel Production
+    'https://doctor.tabibonline.app', // Doctor Panel Production
+    'https://hospital.tabibonline.app', // Hospital Panel Production
+    'https://admin.tabibonline.app', // Admin Panel Production
   ],
   credentials: true,
 }));
@@ -49,7 +53,9 @@ app.use(errorMiddleware);
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", // Sockets only for User Panel
+    origin: ["http://localhost:3000", "https://tabibonline.app"], // User Panel + Production
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 

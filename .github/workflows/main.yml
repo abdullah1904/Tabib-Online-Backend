@@ -48,4 +48,5 @@ jobs:
               --name tabib_online_backend \
               -p 3004:3004 \
               --env-file ~/tabib_online_backend/.env \
+              --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest

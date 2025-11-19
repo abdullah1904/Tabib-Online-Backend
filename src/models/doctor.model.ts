@@ -2,6 +2,7 @@ import { integer, pgTable, varchar, timestamp, boolean } from "drizzle-orm/pg-co
 import { AccountStatus, DoctorApplicationStatus, DoctorPrefix } from "../utils/constants";
 import { relations } from "drizzle-orm";
 import { DoctorReviewTable } from "./doctorReview.model";
+import { DoctorAppointmentTable } from "./doctorAppointment.model";
 
 export const DoctorTable = pgTable("doctors", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -49,4 +50,5 @@ export const DoctorVerificationApplications = pgTable("doctor_verification_appli
 
 export const DoctorTableRelations = relations(DoctorTable, ({ many }) => ({
   reviews: many(DoctorReviewTable),
+  appointments: many(DoctorAppointmentTable) 
 }));
