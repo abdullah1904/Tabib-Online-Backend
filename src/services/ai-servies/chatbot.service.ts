@@ -35,25 +35,16 @@ const StateAnnotation = Annotation.Root({
         },
         default: () => [],
     }),
-    recursionDepth: Annotation<number>({
-        reducer: (left, right) => (right !== undefined ? right : left),
-        default: () => 0,
-    }),
 });
 
-const MAX_RECURSION_DEPTH = 5;
-const MAX_HISTORY_LENGTH = 5;
-
 const chatNode = async (state: typeof StateAnnotation.State) => {
-    const recentMessages = state.messages.slice(-MAX_HISTORY_LENGTH);
     
     const response = await chatbotChain.invoke({
-        question: recentMessages,
+        question: state.messages[state.messages.length - 1].content,
     });
         
     return {
         messages: [response],
-        recursionDepth: state.recursionDepth + 1,
     };
 };
 
@@ -61,10 +52,6 @@ const toolNode = new ToolNode(tools);
 
 const shouldContinue = (state: typeof StateAnnotation.State) => {
     const lastMessage = state.messages[state.messages.length - 1];
-    if (state.recursionDepth >= MAX_RECURSION_DEPTH) {
-        logger.warn(`Max recursion depth (${MAX_RECURSION_DEPTH}) reached. Stopping.`);
-        return END;
-    }
     if (lastMessage instanceof AIMessage && lastMessage.tool_calls?.length) {
         return "tools";
     }
@@ -92,11 +79,9 @@ export const chatServiceStream = async (message: string, thread_id: string) => {
         return graph.stream(
             {
                 messages: [new HumanMessage(trimmedMessage)],
-                recursionDepth: 0,
             },
             {
                 configurable: { thread_id },
-                recursionLimit: MAX_RECURSION_DEPTH,
             }
         );
     } catch (error) {
@@ -114,9 +99,7 @@ export const chatHistoryService = async (thread_id: string) => {
         const state = await graph.getState(config);
         const messages = [];
         
-        const recentMessages = (state.values.messages || []).slice(-MAX_HISTORY_LENGTH);
-        
-        for (const msg of recentMessages) {
+        for (const msg of state.values.messages || []) {
             if (msg instanceof HumanMessage) {
                 messages.push({
                     id: msg.id,
