@@ -13,7 +13,11 @@ const {
 
 const CreateVerificationApplicationDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id: doctorId } = req.doctor;
+        const { id: doctorId, pmdcVerifiedAt } = req.doctor;
+        if(pmdcVerifiedAt){
+            res.status(HTTP_BAD_REQUEST.code).json({ message: "Your PMDC verification is already completed." });
+            return;
+        }
         const existingApplications = await db.select().from(DoctorVerificationApplications).where(eq(DoctorVerificationApplications.doctor, doctorId));
         if (existingApplications.length >= 3){
             res.status(HTTP_BAD_REQUEST.code).json({ message: "You have reached the maximum number of verification attempts. Please contact support for further assistance." });
@@ -22,7 +26,7 @@ const CreateVerificationApplicationDoctor = async (req: Request, res: Response, 
         const newApplication = await db.insert(DoctorVerificationApplications).values({
             doctor: doctorId,
         }).returning();
-        DoctorVerificationQueue.add("process-verification", {
+        await DoctorVerificationQueue.add("process-verification", {
             applicationId: newApplication[0].id,
             doctorId: doctorId
         });

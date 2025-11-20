@@ -1,7 +1,6 @@
 import { pgTable, integer, timestamp, varchar, time, boolean } from "drizzle-orm/pg-core";
 import { DoctorTable } from "./doctor.model";
 import { relations } from "drizzle-orm";
-import z from "zod";
 
 export const DoctorServiceTable = pgTable("doctor_services", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),

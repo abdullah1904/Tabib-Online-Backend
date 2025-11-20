@@ -5,7 +5,7 @@ import { db } from "..";
 import { DoctorTable, DoctorVerificationApplications } from "../models/doctor.model";
 import { eq } from "drizzle-orm";
 import { verificationAgent } from "./ai-servies/verification.service";
-import { getMedicalDegreeText, getPostGraduateDegreeText, getSpecializationText } from "../utils";
+import { getMedicalDegreeText, getPostGraduateDegreeText, getSpecializationText, sendEmail } from "../utils";
 import { DoctorApplicationStatus, VerificationHandlerType } from "../utils/constants";
 
 const DoctorVerificationQueue = new Queue("doctor-verification", {
@@ -17,6 +17,7 @@ const DoctorVerificationQueue = new Queue("doctor-verification", {
 });
 
 const DoctorVerificationWorker = new Worker("doctor-verification", async ({ name, data }: Job) => {
+    logger.info(`Processing doctor verification job: ${name} with data: ${JSON.stringify(data)}`);
     if (name === "process-verification") {
         const { applicationId, doctorId } = data;
         try {
@@ -25,7 +26,7 @@ const DoctorVerificationWorker = new Worker("doctor-verification", async ({ name
                 .where(eq(DoctorTable.id, doctorId));
 
             const doctor = await db.select().from(DoctorTable).where(eq(DoctorTable.id, doctorId)).limit(1);
-            
+
             if (doctor.length === 0) {
                 logger.error(`Doctor with ID ${doctorId} not found for verification application ID ${applicationId}.`);
                 return;
@@ -58,16 +59,23 @@ const DoctorVerificationWorker = new Worker("doctor-verification", async ({ name
                     .set({ pmdcVerifiedAt: new Date() })
                     .where(eq(DoctorTable.id, doctorId));
             }
+            else{
+                sendEmail(
+                    doctor[0].email,
+                    "Doctor Verification Failed",
+                    `Dear Dr. ${doctor[0].fullName},\n\nWe regret to inform you that your verification process has failed. Reason: ${response.structuredResponse.status} - ${response.structuredResponse.reason} Please review your submitted credentials and try again.\n\nBest regards,\nTabib Online Support Team`
+                )
+            }
             await db.update(DoctorVerificationApplications)
-                .set({ 
-                    status: DoctorApplicationStatus.COMPLETED, 
-                    reviewedAt: new Date(), 
+                .set({
+                    status: DoctorApplicationStatus.COMPLETED,
+                    reviewedAt: new Date(),
                     results: response.structuredResponse.status,
-                    reviewedBy:  VerificationHandlerType.AGENT
+                    reviewedBy: VerificationHandlerType.AGENT
                 })
                 .where(eq(DoctorVerificationApplications.id, applicationId));
-
-        } catch (error: any) {
+        }
+        catch (error: any) {
             logger.error(`Error verifying doctor ${doctorId}: ${error.message}`);
             await db.update(DoctorVerificationApplications)
                 .set({ status: DoctorApplicationStatus.ERROR, reviewedAt: new Date(), reviewedBy: VerificationHandlerType.AGENT })
@@ -83,6 +91,14 @@ DoctorVerificationWorker.on("completed", (job: Job, returnvalue: string) => {
 
 DoctorVerificationWorker.on("failed", (job: Job | undefined, err: Error) => {
     logger.error(`Doctor verification job ${job?.id} failed with error: ${err.message}`);
+});
+
+DoctorVerificationQueue.on('error', (error) => {
+    logger.error(`Doctor verification queue error: ${error.message}`);
+});
+
+DoctorVerificationWorker.on('error', (error) => {
+    logger.error(`Doctor verification worker error: ${error.message}`);
 });
 
 export { DoctorVerificationQueue };

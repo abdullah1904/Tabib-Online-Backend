@@ -16,13 +16,14 @@ export interface IDoctor {
     verificationDocumentType: number;
     verificationDocumentNumber: string;
     verificationDocumentURL: string;
-    password: string;
     authenticInformationConsent: boolean;
     licenseVerificationConsent: boolean;
     termsAgreementConsent: boolean;
     dataUsageConsentConsent: boolean;
     status: number;
     verifiedAt: Date | null;
+    suspendedTill: Date | null;
+    pmdcVerifiedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
