@@ -7,7 +7,7 @@ import { removeThinking } from "../../utils";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { chatbotPrompt } from "./prompts";
 import { medicalKnowledgeSearchTool } from "./tools";
-import { ToolNode, toolsCondition } from "@langchain/langgraph/prebuilt";
+import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { logger } from "../../utils/logger";
 
 const tools = [
@@ -38,9 +38,9 @@ const StateAnnotation = Annotation.Root({
 });
 
 const chatNode = async (state: typeof StateAnnotation.State) => {
-    
+    const recentMessages = state.messages.slice(-5);
     const response = await chatbotChain.invoke({
-        question: state.messages[state.messages.length - 1].content,
+        question: recentMessages,
     });
         
     return {
@@ -72,10 +72,7 @@ const graph = graphBuilder
 
 export const chatServiceStream = async (message: string, thread_id: string) => {
     try {
-        const trimmedMessage = message.length > 4000 
-            ? message.substring(0, 4000) + "... (message truncated)"
-            : message;
-
+        const trimmedMessage = message.trim();
         return graph.stream(
             {
                 messages: [new HumanMessage(trimmedMessage)],
