@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { SignupDoctorValidator } from "../../validators/doctor.validators";
 import { AccountStatus, HttpStatusCode, UserType, VerificationType } from "../../utils/constants";
 import { db } from "../..";
 import { DoctorTable } from "../../models/doctor.model";
@@ -8,8 +7,8 @@ import bcrypt from "bcrypt";
 import { VerificationTable } from "../../models/verification.model";
 import { generate } from "otp-generator";
 import { generateJWT, sendEmail } from "../../utils";
-import { ChangePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator, SendOTPValidator, VerificationValidator } from "../../validators";
-import { verificationAgent } from "../../services/ai-servies/verification.service";
+import { changePasswordValidator, forgotPasswordValidator, loginValidator, resetPasswordValidator, sendOTPValidator, verificationValidator } from "../../validators";
+import { signupDoctorValidator } from "../../validators/doctor.validators";
 
 const {
     HTTP_OK,
@@ -20,7 +19,7 @@ const {
 
 const SendOTPDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = SendOTPValidator.validate(req.body);
+        const { error, value } = sendOTPValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -62,7 +61,7 @@ const SendOTPDoctor = async (req: Request, res: Response, next: NextFunction) =>
 
 const SignupDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = SignupDoctorValidator.validate(req.body);
+        const { error, value } = signupDoctorValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -147,7 +146,7 @@ const SignupDoctor = async (req: Request, res: Response, next: NextFunction) => 
 
 const VerifyDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = VerificationValidator.validate(req.body);
+        const { error, value } = verificationValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -197,7 +196,7 @@ const VerifyDoctor = async (req: Request, res: Response, next: NextFunction) => 
 
 const LoginDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = LoginValidator.validate(req.body);
+        const { error, value } = loginValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -245,7 +244,7 @@ const LoginDoctor = async (req: Request, res: Response, next: NextFunction) => {
 
 const ForgotPasswordDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = ForgotPasswordValidator.validate(req.body);
+        const { error, value } = forgotPasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -284,7 +283,7 @@ const ForgotPasswordDoctor = async (req: Request, res: Response, next: NextFunct
 
 const ResetPasswordDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = ResetPasswordValidator.validate(req.body);
+        const { error, value } = resetPasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -340,7 +339,7 @@ const ResetPasswordDoctor = async (req: Request, res: Response, next: NextFuncti
 const ChangePasswordDoctor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: userId } = req.doctor;
-        const { error, value } = ChangePasswordValidator.validate(req.body);
+        const { error, value } = changePasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;

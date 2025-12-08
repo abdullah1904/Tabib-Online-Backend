@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { db } from "../..";
 import { DoctorVerificationApplications } from "../../models/doctor.model";
 import { eq } from "drizzle-orm";
-import { DoctorApplicationStatus, HttpStatusCode } from "../../utils/constants";
+import { HttpStatusCode } from "../../utils/constants";
 import { DoctorVerificationQueue } from "../../services/doctorVerification.service";
 
 const {

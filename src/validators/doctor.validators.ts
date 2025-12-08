@@ -3,7 +3,7 @@
 import joi from "joi";
 import { DayOfWeek, DoctorPrefix, DoctorServiceDuration, DoctorServiceType, Gender, MedicalDegree, PostGraduateDegree, Specialization, VerificationDocumentType } from "../utils/constants";
 
-export const SignupDoctorValidator = joi.object({
+export const signupDoctorValidator = joi.object({
     // Personal Information
     fullName: joi.string().max(100).required(),
     age: joi.number().integer().min(0).max(120).required(),

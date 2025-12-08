@@ -7,9 +7,9 @@ import bcrypt from "bcrypt";
 import { generateJWT, sendEmail } from "../../utils";
 import { MedicalRecordTable } from "../../models/medicalRecord.model";
 import { SignupUserValidator } from "../../validators/user.validators";
-import { ChangePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator, SendOTPValidator, VerificationValidator } from "../../validators";
 import { generate } from "otp-generator";
 import { VerificationTable } from "../../models/verification.model";
+import { changePasswordValidator, forgotPasswordValidator, loginValidator, resetPasswordValidator, sendOTPValidator, verificationValidator } from "../../validators";
 
 const {
     HTTP_OK,
@@ -20,7 +20,7 @@ const {
 
 const SendOTPUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = SendOTPValidator.validate(req.body);
+        const { error, value } = sendOTPValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -152,7 +152,7 @@ const SignupUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const VerifyUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = VerificationValidator.validate(req.body);
+        const { error, value } = verificationValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -202,7 +202,7 @@ const VerifyUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const LoginUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = LoginValidator.validate(req.body);
+        const { error, value } = loginValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -246,7 +246,7 @@ const LoginUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const ForgotPasswordUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = ForgotPasswordValidator.validate(req.body);
+        const { error, value } = forgotPasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -285,7 +285,7 @@ const ForgotPasswordUser = async (req: Request, res: Response, next: NextFunctio
 
 const ResetPasswordUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = ResetPasswordValidator.validate(req.body);
+        const { error, value } = resetPasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -341,7 +341,7 @@ const ResetPasswordUser = async (req: Request, res: Response, next: NextFunction
 const ChangePasswordUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: userId } = req.user;
-        const { error, value } = ChangePasswordValidator.validate(req.body);
+        const { error, value } = changePasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;

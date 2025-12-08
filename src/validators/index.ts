@@ -2,7 +2,7 @@
 import joi from 'joi';
 import { VerificationType } from '../utils/constants';
 
-export const LoginValidator = joi.object({
+export const loginValidator = joi.object({
     email: joi.string().email().max(100).required(),
     password: joi.string()
         .min(8)
@@ -14,16 +14,16 @@ export const LoginValidator = joi.object({
         }),
 });
 
-export const ForgotPasswordValidator = joi.object({
+export const forgotPasswordValidator = joi.object({
     email: joi.string().email().max(100).required(),
 });
 
-export const SendOTPValidator = joi.object({
+export const sendOTPValidator = joi.object({
     email: joi.string().email().max(100).required(),
     verificationType: joi.number().valid(...Object.values(VerificationType)).optional().default(VerificationType.EMAIL_VERIFICATION),
 });
 
-export const VerificationValidator = joi.object({
+export const verificationValidator = joi.object({
     email: joi.string().email().max(100).required(),
     otp: joi.string()
         .pattern(/^\d{6}$/)
@@ -35,7 +35,7 @@ export const VerificationValidator = joi.object({
         })
 });
 
-export const ResetPasswordValidator = joi.object({
+export const resetPasswordValidator = joi.object({
     email: joi.string().email().max(100).required(),
     otp: joi.string()
         .pattern(/^\d{6}$/)
@@ -55,7 +55,7 @@ export const ResetPasswordValidator = joi.object({
         }),
 });
 
-export const ChangePasswordValidator = joi.object({
+export const changePasswordValidator = joi.object({
     currentPassword: joi.string()
         .min(8)
         .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).+$/)
@@ -74,6 +74,6 @@ export const ChangePasswordValidator = joi.object({
         }),
 });
 
-export const CommentValidator = joi.object({
+export const commentValidator = joi.object({
     comment: joi.string().max(500).required(),
 });

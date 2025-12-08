@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: [
-    'https://localhost:3000', // User Panel
+    'http://localhost:3000', // User Panel
     'http://localhost:3001', // Doctor Panel
     'http://localhost:3002', // Hospital Panel
     'http://localhost:3003', // Admin Panel
@@ -53,7 +53,7 @@ app.use(errorMiddleware);
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["https://localhost:3000", "https://tabibonline.app"], // User Panel + Production
+    origin: ["http://localhost:3000", "https://tabibonline.app"], // User Panel + Production
     methods: ["GET", "POST"],
     credentials: true
   }

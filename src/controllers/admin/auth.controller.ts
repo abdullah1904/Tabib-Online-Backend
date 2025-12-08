@@ -9,7 +9,7 @@ import { VerificationTable } from "../../models/verification.model";
 import { generate } from 'otp-generator';
 import path from "path";
 import ejs from "ejs";
-import { ChangePasswordValidator, ForgotPasswordValidator, LoginValidator, ResetPasswordValidator } from "../../validators";
+import { changePasswordValidator, forgotPasswordValidator, loginValidator, resetPasswordValidator } from "../../validators";
 
 const {
     HTTP_OK,
@@ -19,7 +19,7 @@ const {
 
 const LoginAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = LoginValidator.validate(req.body);
+        const { error, value } = loginValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -72,7 +72,7 @@ const LoginAdmin = async (req: Request, res: Response, next: NextFunction) => {
 
 const ForgotPasswordAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = ForgotPasswordValidator.validate(req.body);
+        const { error, value } = forgotPasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -111,7 +111,7 @@ const ForgotPasswordAdmin = async (req: Request, res: Response, next: NextFuncti
 
 const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { error, value } = ResetPasswordValidator.validate(req.body);
+        const { error, value } = resetPasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
@@ -166,7 +166,7 @@ const ResetPasswordAdmin = async (req: Request, res: Response, next: NextFunctio
 const ChangePasswordAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id: adminId } = req.admin;
-        const { error, value } = ChangePasswordValidator.validate(req.body);
+        const { error, value } = changePasswordValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;

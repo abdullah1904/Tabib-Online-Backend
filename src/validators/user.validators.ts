@@ -58,3 +58,41 @@ export const updateMedicalRecordUserValidator = joi.object({
     familyMedicalHistory: joi.string().min(5).max(500).required(),
     pastMedicalHistory: joi.string().min(5).max(500).required(),
 });
+
+import Joi from "joi";
+
+export const doctorAppointmentValidator = Joi.object({
+    appointmentDate: Joi.string()
+        .min(1)
+        .pattern(/^\d{4}-\d{2}-\d{2}$/)
+        .required()
+        .messages({
+            "string.base": "Appointment date is required",
+            "string.empty": "Appointment date is required",
+            "any.required": "Appointment date is required",
+            "string.pattern.base": "Invalid date format. Expected YYYY-MM-DD"
+        }),
+
+    appointmentTime: Joi.string()
+        .min(1)
+        .pattern(/^([01]\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/)
+        .required()
+        .messages({
+            "string.base": "Appointment time is required",
+            "string.empty": "Appointment time is required",
+            "any.required": "Appointment time is required",
+            "string.pattern.base": "Invalid time format. Expected HH:MM or HH:MM:SS"
+        }),
+
+    additionalNotes: Joi.string()
+        .max(500)
+        .messages({
+            "string.max": "Additional notes must be less than or equal to 500 characters long"
+        }).empty(''),
+
+    healthInfoSharingConsent: Joi.boolean()
+        .valid(true)
+        .messages({
+            "any.only": "Health sharing consent is required"
+        }),
+});
