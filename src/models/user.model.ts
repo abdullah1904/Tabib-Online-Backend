@@ -27,6 +27,7 @@ export const UserTable = pgTable("users", {
     healthInfoDisclosureConsent: boolean().notNull(),
     privacyPolicyConsent: boolean().notNull(),
     status: integer().notNull().default(AccountStatus.PENDING),
+    balance: integer().notNull().default(0),
     verifiedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date())

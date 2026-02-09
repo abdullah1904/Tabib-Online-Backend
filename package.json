@@ -50,8 +50,8 @@
     "nodemailer": "^7.0.6",
     "otp-generator": "^4.0.1",
     "postgres": "^3.4.7",
-    "resend": "^6.4.2",
     "socket.io": "^4.8.1",
+    "stripe": "^20.3.1",
     "winston": "^3.17.0",
     "zod": "^3.25.76"
   },
@@ -72,7 +72,11 @@
   "pnpm": {
     "overrides": {
       "esbuild": "^0.25.9",
-      "@esbuild-kit/esm-loader": "npm:tsx@^4.20.4"
+      "@esbuild-kit/esm-loader": "npm:tsx@^4.20.4",
+      "qs@<6.14.1": ">=6.14.1",
+      "lodash@>=4.0.0 <=4.17.22": ">=4.17.23",
+      "undici@<6.23.0": ">=6.23.0",
+      "fast-xml-parser@>=4.3.6 <=5.3.3": ">=5.3.4"
     }
   }
 }

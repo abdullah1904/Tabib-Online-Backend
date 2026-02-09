@@ -2,7 +2,7 @@ import { and, eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import { DoctorTable } from "../../models/doctor.model";
 import { db } from "../..";
-import { HttpStatusCode } from "../../utils/constants";
+import { AccountStatus, HttpStatusCode } from "../../utils/constants";
 import { recommendDoctorMatches } from "../../services/ai-servies/matching.service";
 import { DoctorReviewTable } from "../../models/doctorReview.model";
 import { reviewRatings } from "../../services/ai-servies/review.service";
@@ -40,19 +40,23 @@ const ListDoctorsUser = async (req: Request, res: Response, next: NextFunction) 
                 .from(DoctorTable)
                 .leftJoin(DoctorReviewTable, eq(DoctorTable.id, DoctorReviewTable.doctor))
                 .where(
-                    or(
-                        ilike(DoctorTable.fullName, `%${query}%`),
-                        ilike(DoctorTable.email, `%${query}%`),
-                        ilike(DoctorTable.phoneNumber, `%${query}%`)
+                    and(
+                        or(
+                            ilike(DoctorTable.fullName, `%${query}%`),
+                            ilike(DoctorTable.email, `%${query}%`),
+                            ilike(DoctorTable.phoneNumber, `%${query}%`)
+                        ),
+                        eq(DoctorTable.status, AccountStatus.ACTIVE)
+                        
                     )
                 )
                 .groupBy(DoctorTable.id)
                 .orderBy(
                     sql`CASE 
-            WHEN ${DoctorTable.specialization} = ${matches.primary} THEN 1
-            WHEN ${DoctorTable.specialization} = ${matches.secondary} THEN 2
-            ELSE 3
-          END`,
+                        WHEN ${DoctorTable.specialization} = ${matches.primary} THEN 1
+                        WHEN ${DoctorTable.specialization} = ${matches.secondary} THEN 2
+                        ELSE 3
+                        END`,
                     DoctorTable.id
                 );
         } else {
@@ -63,12 +67,21 @@ const ListDoctorsUser = async (req: Request, res: Response, next: NextFunction) 
                 })
                 .from(DoctorTable)
                 .leftJoin(DoctorReviewTable, eq(DoctorTable.id, DoctorReviewTable.doctor))
+                .where(eq(DoctorTable.status, AccountStatus.ACTIVE))
                 .groupBy(DoctorTable.id)
-                .orderBy(DoctorTable.id);
+                .orderBy(
+                    sql`CASE 
+                        WHEN ${DoctorTable.specialization} = ${matches.primary} THEN 1
+                        WHEN ${DoctorTable.specialization} = ${matches.secondary} THEN 2
+                        ELSE 3
+                        END`,
+                    DoctorTable.id
+                );
         }
         res.status(HTTP_OK.code).json({
             message: "Doctors retrieved successfully",
-            doctors
+            doctors,
+            reasoning: matches.reasoning
         });
     }
     catch (error) {
@@ -145,29 +158,29 @@ const CreateDoctorAppointmentUser = async (req: Request, res: Response, next: Ne
     try {
         const { id: userId } = req.user;
         const { id: doctorId, serviceId } = req.params;
-        
+
         // Add validation for route parameters
         const parsedDoctorId = Number(doctorId);
         const parsedServiceId = Number(serviceId);
-        
+
         if (isNaN(parsedDoctorId) || isNaN(parsedServiceId)) {
-            res.status(HTTP_BAD_REQUEST.code).json({ 
-                error: "Invalid doctor ID or service ID" 
+            res.status(HTTP_BAD_REQUEST.code).json({
+                error: "Invalid doctor ID or service ID"
             });
             return;
         }
-        
+
         const { error, value } = doctorAppointmentValidator.validate(req.body);
         if (error) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
             return;
         }
-        
+
         if (value.appointmentDate < new Date()) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "Appointment date cannot be in the past." });
             return;
         }
-        
+
         const [alreadyUserAppointment, alreadyDoctorAppointment] = await Promise.all([
             db.select().from(DoctorAppointmentTable).where(
                 and(
@@ -186,17 +199,17 @@ const CreateDoctorAppointmentUser = async (req: Request, res: Response, next: Ne
                 )
             )
         ]);
-        
+
         if (alreadyUserAppointment.length > 0) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "You already have an appointment at this time." });
             return;
         }
-        
+
         if (alreadyDoctorAppointment.length > 0) {
             res.status(HTTP_BAD_REQUEST.code).json({ error: "Doctor is not available at this time." });
             return;
         }
-        
+
         const newAppointment = await db.insert(DoctorAppointmentTable).values({
             user: userId,
             doctor: parsedDoctorId, // Use parsed value
@@ -206,7 +219,7 @@ const CreateDoctorAppointmentUser = async (req: Request, res: Response, next: Ne
             additionalNotes: value.additionalNotes,
             healthInfoSharingConsent: value.healthInfoSharingConsent,
         }).returning();
-        
+
         res.status(HTTP_CREATED.code).json({
             message: "Appointment created successfully",
             appointment: newAppointment
@@ -236,10 +249,10 @@ const ListDoctorAppointmentsUser = async (req: Request, res: Response, next: Nex
                 imageURL: DoctorTable.imageURL
             }
         })
-        .from(DoctorAppointmentTable)
-        .leftJoin(DoctorTable, eq(DoctorAppointmentTable.doctor, DoctorTable.id))
-        .where(eq(DoctorAppointmentTable.user, userId));
-        
+            .from(DoctorAppointmentTable)
+            .leftJoin(DoctorTable, eq(DoctorAppointmentTable.doctor, DoctorTable.id))
+            .where(eq(DoctorAppointmentTable.user, userId));
+
         res.status(HTTP_OK.code).json({
             message: "Appointments retrieved successfully",
             appointments

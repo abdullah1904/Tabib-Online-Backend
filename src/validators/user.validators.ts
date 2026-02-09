@@ -96,3 +96,13 @@ export const doctorAppointmentValidator = Joi.object({
             "any.only": "Health sharing consent is required"
         }),
 });
+
+export const walletTopUpValidator = Joi.object({
+    amount: Joi.number()
+        .integer()
+        .min(500)
+        .required()
+        .messages({
+            "number.min": "Amount must be at least 500"
+        })
+});

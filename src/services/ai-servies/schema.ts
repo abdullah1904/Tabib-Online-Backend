@@ -2,9 +2,8 @@ import { z } from "zod"
 
 export const matchingResponseSchema = z.object({
   primary: z.number().describe("Primary doctor specialization ID based on medical history"),
-  primaryReasons: z.string().describe("Reasons for recommending the primary doctor specialization"),
   secondary: z.number().describe("Secondary doctor specialization ID for additional care"),
-  secondaryReasons: z.string().describe("Reasons for recommending the secondary doctor specialization")
+  reasoning: z.string().describe("Detailed reasoning for the recommended doctor specializations based on the patient's medical history and conditions.")
 });
 
 export const reviewResponseSchema = z.object({

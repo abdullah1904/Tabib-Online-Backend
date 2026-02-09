@@ -12,6 +12,7 @@ import { logger } from "./utils/logger";
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from 'http';
 import { Server } from "socket.io";
+import Stripe from "stripe";
 import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./services/socket.service";
 
 
@@ -84,4 +85,6 @@ cloudinary.config({
   cloud_name: config.CLOUDINARY_CLOUD_NAME!,
 });
 
-export { database as db, cloudinary, io };
+const stripe = new Stripe(config.STRIPE_PRIVATE_KEY!)
+
+export { database as db, cloudinary, io, stripe };

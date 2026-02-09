@@ -31,4 +31,7 @@ export const config = {
     LANGSMITH_ENDPOINT: getValue("LANGSMITH_ENDPOINT", null),
     LANGSMITH_API_KEY: getValue("LANGSMITH_API_KEY", null),
     LANGSMITH_PROJECT: getValue("LANGSMITH_PROJECT", "default-project"),
+    STRIPE_PUBLIC_KEY: getValue("STRIPE_PUBLIC_KEY", null),
+    STRIPE_PRIVATE_KEY: getValue("STRIPE_PRIVATE_KEY", null),
+    USER_FRONTEND_URL: getValue("USER_FRONTEND_URL", null),
 };

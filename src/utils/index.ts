@@ -3,7 +3,6 @@ import { config } from "./config"
 import { createTransport } from "nodemailer";
 import { logger } from "./logger";
 import { cloudinary } from "..";
-import { Resend } from 'resend';
 
 const generateJWT = (id: number, type: "ACCESS" | "REFRESH") => {
     if (type === "ACCESS") {
@@ -55,56 +54,34 @@ const deleteCloudinaryImage = async (imageURL: string) => {
     }
 }
 
-// const sendEmail = async (to: string, subject: string, content: string) => {
-//     try {
-//         const transporter = createTransport({
-//             host: 'smtp.gmail.com',
-//             port: 587,
-//             secure: false,
-//             auth: {
-//                 user: config.MAIL_USER,
-//                 pass: config.MAIL_PASS
-//             },
-//             connectionTimeout: 10000,
-//             greetingTimeout: 10000,
-//             socketTimeout: 10000,
-//         });
-
-//         const mailOptions = {
-//             from: {
-//                 name: "Tabib Online",
-//                 address: config.MAIL_USER
-//             },
-//             to: to,
-//             subject: subject,
-//             html: content
-//         };
-//         await transporter.sendMail(mailOptions);
-//         logger.info("Email sent to " + to);
-//     }
-//     catch (err) {
-//         logger.error("Error sending email: " + err);
-//         throw err;
-//     }
-// }
-
 const sendEmail = async (to: string, subject: string, content: string) => {
     try {
-        const resend = new Resend(config.RESEND_API_KEY!);
-        
-        const { data, error } = await resend.emails.send({
-            from: 'Tabib Online <onboarding@resend.dev>',
-            to: to,
-            subject: subject,
-            html: content,
+        const transporter = createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: config.MAIL_USER,
+                pass: config.MAIL_PASS
+            },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000,
         });
 
-        if (error) {
-            throw error;
-        }
-        
+        const mailOptions = {
+            from: {
+                name: "Tabib Online",
+                address: config.MAIL_USER
+            },
+            to: to,
+            subject: subject,
+            html: content
+        };
+        await transporter.sendMail(mailOptions);
         logger.info("Email sent to " + to);
-    } catch (err) {
+    }
+    catch (err) {
         logger.error("Error sending email: " + err);
         throw err;
     }
