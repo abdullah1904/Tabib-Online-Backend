@@ -23,6 +23,7 @@ export interface IUser {
     healthInfoDisclosureConsent: boolean;
     privacyPolicyConsent: boolean;
     status: number;
+    balance: number;
     verifiedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;

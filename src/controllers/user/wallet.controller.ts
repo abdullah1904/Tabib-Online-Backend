@@ -29,8 +29,8 @@ const CreateWalletTopUp = async (req: Request, res: Response, next: NextFunction
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${config.USER_FRONTEND_URL}/wallet?top-up=success`,
-            cancel_url: `${config.USER_FRONTEND_URL}/wallet?top-up=cancel`,
+            success_url: `${config.USER_FRONTEND_URL}/profile/wallet?topup=success`,
+            cancel_url: `${config.USER_FRONTEND_URL}/profile/wallet?topup=cancel`,
             metadata: {
                 userId: userId.toString(),
                 amount: value.amount.toString(),
@@ -49,7 +49,7 @@ const CreateWalletTopUp = async (req: Request, res: Response, next: NextFunction
 
 const ListWalletTopUps = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id: userId } = req.user;
+        const { id: userId, balance } = req.user;
         const sessions = await stripe.checkout.sessions.list();
         const userSessions = sessions.data.filter(
             (session) => session.metadata?.userId === userId.toString()
@@ -60,9 +60,10 @@ const ListWalletTopUps = async (req: Request, res: Response, next: NextFunction)
             status: session.payment_status,
             checkoutURL: session.url,
             createdAt: new Date(session.created * 1000),
-        }));
+        })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         res.status(HTTP_OK.code).json({
             message: "Wallet top-up sessions retrieved successfully",
+            balance: balance,
             sessions: userSessions
         });
     }

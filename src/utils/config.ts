@@ -33,5 +33,6 @@ export const config = {
     LANGSMITH_PROJECT: getValue("LANGSMITH_PROJECT", "default-project"),
     STRIPE_PUBLIC_KEY: getValue("STRIPE_PUBLIC_KEY", null),
     STRIPE_PRIVATE_KEY: getValue("STRIPE_PRIVATE_KEY", null),
+    STRIPE_WEBHOOK_SECRET: getValue("STRIPE_WEBHOOK_SECRET", null),
     USER_FRONTEND_URL: getValue("USER_FRONTEND_URL", null),
 };

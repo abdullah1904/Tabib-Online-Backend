@@ -14,6 +14,7 @@ import { createServer } from 'http';
 import { Server } from "socket.io";
 import Stripe from "stripe";
 import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./services/socket.service";
+import { StripeWebHook } from "./routes/webhooks";
 
 
 const app = express();
@@ -23,6 +24,11 @@ const client = postgres(config.DATABASE_URL as string, {
   connect_timeout: 10000
 });
 const database = drizzle(client);
+
+app.post("/api/v1/stripe-webhook", 
+  express.raw({ type: 'application/json' }), 
+  StripeWebHook
+);
 
 app.set('trust proxy', 1);
 app.use(express.json());
