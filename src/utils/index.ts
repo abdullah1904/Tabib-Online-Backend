@@ -4,7 +4,7 @@ import { createTransport } from "nodemailer";
 import { logger } from "./logger";
 import { cloudinary } from "..";
 
-const generateJWT = (id: number, type: "ACCESS" | "REFRESH") => {
+const generateJWT = (id: string, type: "ACCESS" | "REFRESH") => {
     if (type === "ACCESS") {
         return jwt.sign({ id }, config.ACCESS_TOKEN_SECRET!, { expiresIn: config.ACCESS_TOKEN_EXPIRY } as jwt.SignOptions)
     }
@@ -22,14 +22,6 @@ const getCloudinaryFolderName = (type: 'SIGN_UP' | 'PROFILE_UPDATE')=>{
         folder = "tabib-online/profile-images";
     }
     return folder;
-}
-
-const getCloudinaryFoldersNames = (type: 'DOCTOR_SIGNUP') => {
-    let folders = ["tabib-online", "tabib-online"];
-    if (type === 'DOCTOR_SIGNUP') {
-        folders = ["tabib-online/doctor-licenses-document", "tabib-online/doctor-verifications-document"];
-    }
-    return folders;
 }
 
 const deleteCloudinaryImage = async (imageURL: string) => {
@@ -282,7 +274,6 @@ const getSpecializationText = (value: number) => {
 export {
     generateJWT,
     getCloudinaryFolderName,
-    getCloudinaryFoldersNames,
     deleteCloudinaryImage,
     sendEmail,
     removeThinking,

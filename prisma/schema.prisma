@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Users {
+  id                         String             @id @default(uuid())
+  fullName                   String
+  age                        Int
+  gender                     Int
+  email                      String
+  address                    String
+  phoneNumber                String
+  verificationDocumentType   Int
+  verificationDocumentNumber String
+  verificationDocumentURL    String
+  password                   String
+  role                       Int
+  prefix                     Int                @default(0)
+  suspendedTill              DateTime?
+  status                     Int                @default(0)
+  balance                    Float              @default(0)
+  imageURL                   String             @default("")
+  verifiedAt                 DateTime?
+  createdAt                  DateTime           @default(now())
+  updatedAt                  DateTime           @updatedAt
+  medicalInfo                MedicalRecords?
+  professionalInfo           ProfessionalInfos?
+  verifications              Verifications[]
+
+  @@unique([email, verificationDocumentNumber, verificationDocumentType, phoneNumber])
+}
+
+model Verifications {
+  otp       String   @id
+  userId    String
+  type      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MedicalRecords {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  emergencyContactName   String
+  emergencyContactNumber String
+  bloodType              String
+  height                 Float
+  weight                 Float
+  allergies              String
+  currentMedications     String
+  familyMedicalHistory   String
+  pastMedicalHistory     String
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProfessionalInfos {
+  id                     String    @id @default(uuid())
+  userId                 String    @unique
+  medicalDegree          Int
+  postGraduateDegree     Int
+  specialization         Int
+  yearsOfExperience      Int
+  PMDCRedgNo             String
+  PMDCRedgDate           DateTime
+  PMDCLicenseDocumentURL String
+  PMDCVerifiedAt         DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

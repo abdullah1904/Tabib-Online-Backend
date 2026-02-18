@@ -1,1 +1,0 @@
-ALTER TABLE "doctor_services" ADD COLUMN "allowCustom" boolean DEFAULT false NOT NULL;

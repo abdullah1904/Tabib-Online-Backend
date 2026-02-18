@@ -1,1 +1,0 @@
-ALTER TABLE "doctors" ADD COLUMN "pmdcVerifiedAt" timestamp with time zone;

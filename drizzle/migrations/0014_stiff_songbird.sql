@@ -1,1 +1,0 @@
-ALTER TABLE "doctor_services" ALTER COLUMN "time" SET DATA TYPE timestamp;

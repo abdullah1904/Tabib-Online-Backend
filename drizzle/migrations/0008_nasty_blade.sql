@@ -1,1 +1,0 @@
-ALTER TABLE "doctors" ADD COLUMN "doctorPrefix" integer DEFAULT 1 NOT NULL;

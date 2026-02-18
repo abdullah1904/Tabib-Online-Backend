@@ -1,2 +1,0 @@
-ALTER TABLE "verifications" DROP CONSTRAINT "verifications_email_unique";--> statement-breakpoint
-CREATE UNIQUE INDEX "unique_verification_idx" ON "verifications" USING btree ("email","verificationType","userType");

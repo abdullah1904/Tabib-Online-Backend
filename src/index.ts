@@ -4,29 +4,22 @@ import cors from "cors";
 import helmet from "helmet";
 import errorMiddleware from "./middlewares/error.middleware";
 import loggingMiddleware from "./middlewares/logging.middleware";
-import appRouter from "./routes";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import { config } from "./utils/config";
 import { logger } from "./utils/logger";
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from 'http';
 import { Server } from "socket.io";
 import Stripe from "stripe";
-import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./services/socket.service";
-import { StripeWebHook } from "./routes/webhooks";
+import appRouter from "./routes";
+import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./socketHandlers";
+import { StripeWebHook } from "./webhooks";
+
 
 
 const app = express();
-const client = postgres(config.DATABASE_URL as string, {
-  max: 10,
-  idle_timeout: 30000,
-  connect_timeout: 10000
-});
-const database = drizzle(client);
 
-app.post("/api/v1/stripe-webhook", 
-  express.raw({ type: 'application/json' }), 
+app.post("/api/v1/stripe-webhook",
+  express.raw({ type: 'application/json' }),
   StripeWebHook
 );
 
@@ -37,13 +30,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: [
     'http://localhost:3000', // User Panel
-    'http://localhost:3001', // Doctor Panel
-    'http://localhost:3002', // Hospital Panel
-    'http://localhost:3003', // Admin Panel
-    'https://tabibonline.app', // User Panel Production
-    'https://doctor.tabibonline.app', // Doctor Panel Production
-    'https://hospital.tabibonline.app', // Hospital Panel Production
-    'https://admin.tabibonline.app', // Admin Panel Production
+    // 'http://localhost:3001', // Doctor Panel
+    // 'http://localhost:3002', // Hospital Panel
+    // 'http://localhost:3003', // Admin Panel
+    // 'https://tabibonline.app', // User Panel Production
+    // 'https://doctor.tabibonline.app', // Doctor Panel Production
+    // 'https://hospital.tabibonline.app', // Hospital Panel Production
+    // 'https://admin.tabibonline.app', // Admin Panel Production
   ],
   credentials: true,
 }));
@@ -69,7 +62,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId as string;
   onConnectionHandler(socket, userId);
-  
+
   // Handle incoming messages from clients
   socket.on("message", async ({ query }) => {
     await onMessageHandler(socket, userId, query);
@@ -93,4 +86,4 @@ cloudinary.config({
 
 const stripe = new Stripe(config.STRIPE_PRIVATE_KEY!)
 
-export { database as db, cloudinary, io, stripe };
+export { cloudinary, io, stripe };

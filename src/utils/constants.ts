@@ -267,11 +267,12 @@ enum Gender {
     FEMALE = 2
 }
 
-enum UserType {
-    USER = 1,
-    DOCTOR = 2,
-    HOSPITAL = 3,
-    ADMIN = 4
+enum UserRole{
+    SUPER_ADMIN = 0,
+    ADMIN = 1,
+    USER = 2,
+    DOCTOR = 3,
+    HOSPITAL = 4,
 }
 
 enum VerificationDocumentType {
@@ -287,9 +288,10 @@ enum AccountStatus {
     BANNED = 3,
 }
 
-enum VerificationType {
+enum VerificationType{
     EMAIL_VERIFICATION = 1,
-    PASSWORD_RESET = 2
+    PASSWORD_RESET = 2,
+    TWO_FACTOR_AUTH = 3,
 }
 
 enum AdminPrivilege {
@@ -465,7 +467,7 @@ enum AppointmentStatus {
 export {
     HttpStatusCode,
     Gender,
-    UserType,
+    UserRole,
     VerificationDocumentType,
     AccountStatus,
     VerificationType,

@@ -1,6 +1,6 @@
 {
   "name": "tabib-online-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,9 +8,8 @@
     "build": "npx tsc",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:generate": "npx prisma generate",
+    "db:migrate": "npx prisma migrate dev"
   },
   "repository": {
     "type": "git",
@@ -19,26 +18,24 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/abdullah1904/Tabib-Online-Backend/issues"
   },
   "homepage": "https://github.com/abdullah1904/Tabib-Online-Backend#readme",
   "dependencies": {
-    "@huggingface/inference": "^4.13.0",
-    "@langchain/cohere": "^1.0.0",
+    "@langchain/cohere": "^1.0.2",
     "@langchain/core": "^1.1.8",
     "@langchain/groq": "^1.0.0",
     "@langchain/langgraph": "^1.0.1",
     "@langchain/langgraph-checkpoint": "^1.0.0",
     "@langchain/qdrant": "^1.0.0",
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.63.0",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
-    "drizzle-orm": "^0.44.5",
-    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
@@ -65,18 +62,15 @@
     "@types/node": "^24.3.1",
     "@types/nodemailer": "^7.0.2",
     "@types/otp-generator": "^4.0.2",
-    "drizzle-kit": "^0.31.5",
+    "prisma": "^7.4.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
   "pnpm": {
     "overrides": {
-      "esbuild": "^0.25.9",
-      "@esbuild-kit/esm-loader": "npm:tsx@^4.20.4",
-      "qs@<6.14.1": ">=6.14.1",
-      "lodash@>=4.0.0 <=4.17.22": ">=4.17.23",
-      "undici@<6.23.0": ">=6.23.0",
-      "fast-xml-parser@>=4.3.6 <=5.3.3": ">=5.3.4"
+      "fast-xml-parser": ">=5.3.6",
+      "lodash": ">=4.17.23",
+      "hono": ">=4.11.7"
     }
   }
 }
