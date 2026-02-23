@@ -1,5 +1,6 @@
 import { Prisma } from "../../generated/prisma/client";
 import prisma from "../../lib/prisma";
+import { deleteCloudinaryImage } from "../../utils";
 import { DoctorApplicationStatus, UserRole } from "../../utils/constants";
 
 export class UsersService {
@@ -76,10 +77,20 @@ export class UsersService {
     }
 
     async updateUserProfile(userId: string, data: Prisma.UsersUpdateInput) {
-        return await prisma.users.update({
+        if (data.imageURL) {
+            const existingUser = await prisma.users.findUnique({
+                where: { id: userId },
+                select: { imageURL: true }
+            });
+            if (existingUser?.imageURL && existingUser.imageURL !== data.imageURL) {
+                await deleteCloudinaryImage(existingUser.imageURL);
+            }
+        }
+        const updatedUser = await prisma.users.update({
             where: { id: userId },
             data
         });
+        return updatedUser;
     }
 
     async getMedicalRecord(userId: string) {

@@ -1,9 +1,9 @@
 import { HTTPError } from "../../common/error";
+import { VerificationsService } from "../../common/services/verification.service";
 import { Prisma } from "../../generated/prisma/client";
 import prisma from "../../lib/prisma";
-import { AccountStatus, HttpStatusCode, UserRole, VerificationType } from "../../utils/constants";
+import { AccountStatus, HttpStatusCode, OTPType, UserRole,  } from "../../utils/constants";
 import { UsersService } from "../users/users.service";
-import { VerificationsService } from "../verifications/verifications.service";
 import bcrypt from "bcrypt";
 
 const {
@@ -26,7 +26,7 @@ export class AuthService {
         });
         await this.verificationsService.create({
             userId: createdUser.id,
-            type: VerificationType.EMAIL_VERIFICATION
+            type: OTPType.EMAIL_VERIFICATION
         });
         return createdUser;
     }
@@ -50,12 +50,12 @@ export class AuthService {
         }
         return user;
     }
-    sendOTP = async (email: string, type: VerificationType) => {
+    sendOTP = async (email: string, type: OTPType) => {
         const user = await this.usersService.findByEmail(email);
         if (!user) {
             throw new HTTPError("User not found", HTTP_NOT_FOUND.code);
         }
-        if (user.verifiedAt !== null && type == VerificationType.EMAIL_VERIFICATION) {
+        if (user.verifiedAt !== null && type == OTPType.EMAIL_VERIFICATION) {
             throw new HTTPError("Email is already verified", HTTP_BAD_REQUEST.code);
         }
         await this.verificationsService.deleteUserVerificationByType(user.id, type);
@@ -70,7 +70,7 @@ export class AuthService {
         if (!user) {
             throw new HTTPError("User not found", HTTP_NOT_FOUND.code);
         }
-        const verification = await this.verificationsService.findUserVerificationByType(user.id, VerificationType.EMAIL_VERIFICATION);
+        const verification = await this.verificationsService.findUserVerificationByType(user.id, OTPType.EMAIL_VERIFICATION);
         if (!verification) {
             throw new HTTPError("Verification request not found", HTTP_NOT_FOUND.code);
         }
@@ -84,7 +84,7 @@ export class AuthService {
         }
         await Promise.all([
             this.usersService.update(user.id, { status: AccountStatus.ACTIVE, verifiedAt: new Date() }),
-            this.verificationsService.deleteUserVerificationByType(user.id, VerificationType.EMAIL_VERIFICATION)
+            this.verificationsService.deleteUserVerificationByType(user.id, OTPType.EMAIL_VERIFICATION)
         ]);
         return;
     }
@@ -93,7 +93,7 @@ export class AuthService {
         if (!user) {
             throw new HTTPError("User not found", HTTP_NOT_FOUND.code);
         }
-        const verification = await this.verificationsService.findUserVerificationByType(user.id, VerificationType.PASSWORD_RESET);
+        const verification = await this.verificationsService.findUserVerificationByType(user.id, OTPType.PASSWORD_RESET);
         if (!verification) {
             throw new HTTPError("Verification request not found", HTTP_NOT_FOUND.code);
         }
@@ -108,7 +108,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Promise.all([
             this.usersService.update(user.id, { password: hashedPassword }),
-            this.verificationsService.deleteUserVerificationByType(user.id, VerificationType.PASSWORD_RESET)
+            this.verificationsService.deleteUserVerificationByType(user.id, OTPType.PASSWORD_RESET)
         ]);
         return;
     }

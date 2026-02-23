@@ -1,5 +1,5 @@
 import joi from "joi";
-import { Gender, UserRole, VerificationDocumentType, VerificationType } from "../utils/constants";
+import { Gender, UserRole, VerificationDocumentType, OTPType } from "../utils/constants";
 
 export const registerSchema = joi.object({
     fullName: joi.string().max(100).required(),
@@ -36,7 +36,7 @@ export const loginSchema = joi.object({
 
 export const sendOTPSchema = joi.object({
     email: joi.string().email().max(100).required(),
-    type: joi.number().valid(...Object.values(VerificationType)).required(),
+    type: joi.number().valid(...Object.values(OTPType)).required(),
 });
 
 export const emailVerificationSchema = joi.object({

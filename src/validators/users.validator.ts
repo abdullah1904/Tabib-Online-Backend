@@ -10,7 +10,7 @@ export const profileSchema = joi.object({
 });
 
 
-export const medicalRecordSchema = joi.object({
+export const medicalProfileSchema = joi.object({
     emergencyContactNumber: joi.string().min(2).max(100).required(),
     emergencyContactName: joi.string().min(1).max(100).required(),
     bloodType: joi.string().min(1).max(3).required(),

@@ -1,14 +1,15 @@
 import { ChatGroq } from '@langchain/groq';
 import { RunnableSequence } from '@langchain/core/runnables';
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
-import { Annotation, END, MemorySaver, START, StateGraph } from '@langchain/langgraph';
+import { Annotation, END, START, StateGraph, MemorySaver } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { config } from '../../utils/config';
-import { logger } from '../../utils/logger';
 import { removeThinking } from '../../utils';
-import { medicalKnowledgeSearchTool } from './tabib-bot.tools';
-import { tabibbotPrompt } from './tabib-bot.prompts';
+import { medicalKnowledgeSearchTool } from './tools/medicalKnoweldgeSearch.tool';
+import { tabibbotPrompt } from './prompts/tabibBotSystem.prompt';
 
+
+const checkpointer = new MemorySaver();
 export class TabibBotService {
 
     private readonly tools = [medicalKnowledgeSearchTool];
@@ -33,7 +34,6 @@ export class TabibBotService {
         }),
     });
 
-    private readonly checkpointer = new MemorySaver();
 
     private readonly graph = (() => {
         const chatNode = async (state: typeof this.StateAnnotation.State) => {
@@ -63,60 +63,52 @@ export class TabibBotService {
             .addEdge(START, 'chatNode')
             .addConditionalEdges('chatNode', shouldContinue)
             .addEdge('tools', 'chatNode')
-            .compile({ checkpointer: this.checkpointer });
+            .compile({ checkpointer: checkpointer });
     })();
 
-    async chatServiceStream(message: string, thread_id: string) {
-        try {
-            const trimmedMessage = message.trim();
-            return this.graph.stream(
-                {
-                    messages: [new HumanMessage(trimmedMessage)],
-                },
-                {
-                    configurable: { thread_id },
-                },
-            );
-        } catch (error) {
-            logger.error('Error in chatServiceStream:', error);
-            throw error;
-        }
+    async chatResponse(message: string, thread_id: string) {
+        return this.graph.stream(
+            {
+                messages: [new HumanMessage(message.trim())],
+            },
+            {
+                configurable: { thread_id },
+            },
+        );
     }
 
-    async chatHistoryService(thread_id: string) {
-        const graphConfig = {
+    async chatHistory(thread_id: string) {
+        const config = {
             configurable: { thread_id },
-        };
-
-        try {
-            const state = await this.graph.getState(graphConfig);
-            const messages = [];
-
-            for (const msg of state.values.messages || []) {
-                if (msg instanceof HumanMessage) {
+        }
+        const state = await this.graph.getState(config);
+        const messages: {
+            id: string | undefined;
+            role: 'HumanMessage' | 'AIMessage';
+            content: string;
+        }[] = [];
+        for (const msg of state.values.messages || []) {
+            if (msg instanceof HumanMessage) {
+                messages.push({
+                    id: msg.id,
+                    role: 'HumanMessage',
+                    content:
+                        typeof msg.content === 'string'
+                            ? msg.content
+                            : JSON.stringify(msg.content),
+                });
+            }
+            else if (msg instanceof AIMessage) {
+                const content = msg.content as string;
+                if (content && content.trim()) {
                     messages.push({
                         id: msg.id,
-                        role: 'HumanMessage',
-                        content:
-                            typeof msg.content === 'string'
-                                ? msg.content
-                                : JSON.stringify(msg.content),
+                        role: 'AIMessage',
+                        content: removeThinking(content),
                     });
-                } else if (msg instanceof AIMessage) {
-                    const content = msg.content as string;
-                    if (content && content.trim()) {
-                        messages.push({
-                            role: 'AIMessage',
-                            content: removeThinking(content),
-                        });
-                    }
                 }
             }
-
-            return messages;
-        } catch (error) {
-            logger.error('Error in chatHistoryService:', error);
-            return [];
         }
+        return messages ?? [];
     }
 }

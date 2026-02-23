@@ -2,10 +2,10 @@ import { generate } from "otp-generator";
 import { Prisma } from "../../generated/prisma/client";
 import prisma from "../../lib/prisma";
 import { sendEmail } from "../../utils";
-import { VerificationType } from "../../utils/constants";
+import { OTPType } from "../../utils/constants";
 
 export class VerificationsService {
-    async create(data: { userId: string, type: VerificationType }) {
+    async create(data: { userId: string, type: OTPType }) {
         const otp = generate(6, {
             digits: true,
             lowerCaseAlphabets: false,
@@ -34,7 +34,7 @@ export class VerificationsService {
         });
     }
 
-    async findUserVerificationByType(userId: string, type: number) {
+    async findUserVerificationByType(userId: string, type: OTPType) {
         return await prisma.verifications.findFirst({
             where: { userId, type }
         });
@@ -46,7 +46,7 @@ export class VerificationsService {
         });
     }
 
-    async deleteUserVerificationByType(userId: string, type: number) {
+    async deleteUserVerificationByType(userId: string, type: OTPType) {
         return await prisma.verifications.deleteMany({
             where: { userId, type }
         });

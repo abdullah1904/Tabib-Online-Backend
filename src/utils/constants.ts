@@ -288,7 +288,7 @@ enum AccountStatus {
     BANNED = 3,
 }
 
-enum VerificationType{
+enum OTPType{
     EMAIL_VERIFICATION = 1,
     PASSWORD_RESET = 2,
     TWO_FACTOR_AUTH = 3,
@@ -470,7 +470,7 @@ export {
     UserRole,
     VerificationDocumentType,
     AccountStatus,
-    VerificationType,
+    OTPType,
     AdminPrivilege,
     MedicalDegree,
     PostGraduateDegree,

@@ -6,9 +6,8 @@ import { uploadImageMiddleware } from "../../middlewares/upload.middleware";
 const usersRouter = Router();
 const usersControllers = new UsersControllers();
 
-usersRouter.get("/profile", usersControllers.getUserProfileController);
-usersRouter.patch("/profile", uploadImageMiddleware('PROFILE_UPDATE'), usersControllers.updateUserProfileController);
-usersRouter.get("/medical-record", authenticateUser,usersControllers.getMedicalRecordController);
-usersRouter.patch("/medical-record", authenticateUser,usersControllers.updateMedicalRecordController);
+usersRouter.patch("/profile/personal", uploadImageMiddleware('PROFILE_UPDATE'), usersControllers.updateUserProfileController);
+usersRouter.get("/profile/medical", authenticateUser,usersControllers.getMedicalRecordController);
+usersRouter.put("/profile/medical", authenticateUser,usersControllers.updateMedicalRecordController);
 
 export default usersRouter;

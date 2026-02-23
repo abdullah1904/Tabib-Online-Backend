@@ -1,10 +1,9 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { CohereEmbeddings } from "@langchain/cohere";
-import { config } from "../../utils/config";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { logger } from "../../utils/logger";
 import { Document } from "langchain";
+import { config } from "../../../utils/config";
 
 const embeddings = new CohereEmbeddings({
     model: config.COHERE_EMBEDDING_MODEL,

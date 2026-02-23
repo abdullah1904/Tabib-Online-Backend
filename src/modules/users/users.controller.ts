@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UsersService } from "./users.service";
-import { profileSchema } from "../../validators/users.validator";
+import { medicalProfileSchema, profileSchema } from "../../validators/users.validator";
 import { HttpStatusCode } from "../../utils/constants";
 
 const {
@@ -55,19 +55,6 @@ export class UsersControllers {
             next(error);
         }
     }
-
-    getUserProfileController = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const user = await this.usersService.getUserProfile(req.user.id);
-            res.status(HTTP_OK.code).json({
-                message: "User profile retrieved successfully",
-                user,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
     updateUserProfileController = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { error, value} = profileSchema.validate(req.body);
@@ -99,7 +86,7 @@ export class UsersControllers {
     }
     updateMedicalRecordController = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { error, value} = profileSchema.validate(req.body);
+            const { error, value} = medicalProfileSchema.validate(req.body);
             if(error) {
                 res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
                 return;

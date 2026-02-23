@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { changePasswordSchema, emailVerificationSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, sendOTPSchema } from "../../validators/auth.validator";
 import { DoctorPrefix, HttpStatusCode, UserRole } from "../../utils/constants";
-import { UsersService } from "../users/users.service";
 import { generateJWT } from "../../utils";
 import { AuthService } from "./auth.service";
 
