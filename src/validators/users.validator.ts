@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { Gender, MedicalDegree, PostGraduateDegree, Specialization } from '../utils/constants';
+import { DoctorPrefix, Gender, MedicalDegree, PostGraduateDegree, Specialization } from '../utils/constants';
 
 export const profileSchema = joi.object({
     imageURL: joi.string().uri().max(255).optional(),
@@ -23,6 +23,14 @@ export const medicalProfileSchema = joi.object({
 });
 
 export const professionalInfoSchema = joi.object({
+    medicalDegree: joi.number().valid(...Object.values(MedicalDegree)).required(),
+    postGraduateDegree: joi.number().valid(...Object.values(PostGraduateDegree)).required(),
+    specialization: joi.number().valid(...Object.values(Specialization)).required(),
+    yearsOfExperience: joi.number().integer().min(0).max(80).required(),
+    prefix: joi.number().valid(...Object.values(DoctorPrefix)).required(),
+});
+
+export const pmdcInfoSchema = joi.object({
     pmdcRedgNo: joi.string()
         .max(25)
         .required()
@@ -41,9 +49,5 @@ export const professionalInfoSchema = joi.object({
             'any.required': 'PMDC registration number is required'
         }),
     pmdcRedgDate: joi.date().required(),
-    medicalDegree: joi.number().valid(...Object.values(MedicalDegree)).required(),
-    postGraduateDegree: joi.number().valid(...Object.values(PostGraduateDegree)).required(),
-    specialization: joi.number().valid(...Object.values(Specialization)).required(),
-    yearsOfExperience: joi.number().integer().min(0).max(80).required(),
     pmdcLicenseDocumentURL: joi.string().uri().max(255).required(),
 });

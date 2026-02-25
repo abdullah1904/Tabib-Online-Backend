@@ -1,7 +1,6 @@
-import { HTTPError } from "../../common/error";
 import { VerificationsService } from "../../common/services/verification.service";
 import { Prisma } from "../../generated/prisma/client";
-import prisma from "../../lib/prisma";
+import { HTTPError } from "../../types";
 import { AccountStatus, HttpStatusCode, OTPType, UserRole,  } from "../../utils/constants";
 import { UsersService } from "../users/users.service";
 import bcrypt from "bcrypt";
@@ -38,9 +37,6 @@ export class AuthService {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             throw new HTTPError("Invalid password", HTTP_BAD_REQUEST.code);
-        }
-        if (user.status == AccountStatus.PENDING) {
-            throw new HTTPError("Account is pending verification", HTTP_BAD_REQUEST.code);
         }
         if (user.status == AccountStatus.BANNED) {
             throw new HTTPError("Account is banned", HTTP_BAD_REQUEST.code);
@@ -79,7 +75,7 @@ export class AuthService {
         }
         const now = new Date();
         const otpAge = (now.getTime() - verification.createdAt.getTime()) / 1000;
-        if (otpAge > 300) { // OTP is valid for 5 minutes
+        if (otpAge > 300) {
             throw new HTTPError("OTP has expired", HTTP_BAD_REQUEST.code);
         }
         await Promise.all([

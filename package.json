@@ -30,7 +30,7 @@
     "@langchain/langgraph-checkpoint": "^1.0.0",
     "@langchain/qdrant": "^1.0.0",
     "@prisma/adapter-pg": "^7.4.0",
-    "@prisma/client": "^7.4.0",
+    "@prisma/client": "^7.4.1",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.63.0",
     "cloudinary": "^2.7.0",
@@ -62,7 +62,7 @@
     "@types/node": "^24.3.1",
     "@types/nodemailer": "^7.0.2",
     "@types/otp-generator": "^4.0.2",
-    "prisma": "^7.4.0",
+    "prisma": "^7.4.1",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
@@ -71,6 +71,10 @@
       "fast-xml-parser": ">=5.3.6",
       "lodash": ">=4.17.23",
       "hono": ">=4.11.7"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "prisma"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UsersService } from "./users.service";
-import { medicalProfileSchema, profileSchema } from "../../validators/users.validator";
+import { medicalProfileSchema, pmdcInfoSchema, professionalInfoSchema, profileSchema } from "../../validators/users.validator";
 import { HttpStatusCode } from "../../utils/constants";
 
 const {
@@ -14,47 +14,7 @@ export class UsersControllers {
     constructor() {
         this.usersService = new UsersService();
     }
-
-    listAllUsersController = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const users = await this.usersService.findAll();
-            res.status(HTTP_OK.code).json({
-                message: "Users retrieved successfully",
-                users,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-
-    // listAllUserDoctorsController = async (req: Request, res: Response, next: NextFunction) => {
-    //     try {
-    //         const doctors = await this.usersService.findAllDoctors();
-    //         res.status(HTTP_OK.code).json({
-    //             message: "Doctors retrieved successfully",
-    //             doctors,
-    //         });
-    //     }
-    // }
-
-    getUserByIdController = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-            const user = await this.usersService.findById(id);
-            if(!user) {
-                res.status(HTTP_NOT_FOUND.code).json({ error: "User not found" });
-                return;
-            }
-            res.status(HTTP_OK.code).json({
-                message: "User retrieved successfully",
-                user,
-            });
-        }
-        catch (error) {
-            next(error);
-        }
-    }
+    
     updateUserProfileController = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { error, value} = profileSchema.validate(req.body);
@@ -95,6 +55,52 @@ export class UsersControllers {
             res.status(HTTP_OK.code).json({
                 message: "Medical record updated successfully",
                 medicalRecord: updatedMedicalRecord,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    getProfessionalInfoController = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const professionalInfo = await this.usersService.getProfessionalInfo(req.user.id);
+            res.status(HTTP_OK.code).json({
+                message: "Professional info retrieved successfully",
+                professionalInfo,
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    updateProfessionalInfoController = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { error, value} = professionalInfoSchema.validate(req.body);
+            if(error) {
+                res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
+                return;
+            }
+            const updatedProfessionalInfo = await this.usersService.updateProfessionalInfo(req.user.id, value);
+            res.status(HTTP_OK.code).json({
+                message: "Professional info updated successfully",
+                professionalInfo: updatedProfessionalInfo,
+            });
+        }
+        catch (error) {
+            
+        }
+    }
+    updatePmdcInfoController = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { error, value } = pmdcInfoSchema.validate(req.body);
+            if(error) {
+                res.status(HTTP_BAD_REQUEST.code).json({ error: error.details[0].message });
+                return;
+            }
+            const updatedProfessionalInfo = await this.usersService.updateProfessionalInfo(req.user.id, value);
+            res.status(HTTP_OK.code).json({
+                message: "PMDC info updated successfully",
+                professionalInfo: updatedProfessionalInfo,
             });
         }
         catch (error) {

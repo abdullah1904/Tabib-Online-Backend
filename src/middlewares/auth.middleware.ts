@@ -11,7 +11,7 @@ const {
     HTTP_INTERNAL_SERVER_ERROR
 } = HttpStatusCode;
 
-const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
+const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let token;
         if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
@@ -57,62 +57,26 @@ const authenticateUser = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-const authorizeUser = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        if (!req.user) {
-            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
+const authorize = (userRole: UserRole) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            if (!req.user) {
+                res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
+            }
+            if (req.user.role !== userRole) {
+                res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
+                return;
+            }
+            next();
+        }
+        catch (err) {
+            res.status(HTTP_INTERNAL_SERVER_ERROR.code).json({ error: HTTP_INTERNAL_SERVER_ERROR.message });
             return;
         }
-        if (req.user.role !== UserRole.USER) {
-            res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
-            return;
-        }
-        next();
-    }
-    catch (err) {
-        res.status(HTTP_INTERNAL_SERVER_ERROR.code).json({ error: HTTP_INTERNAL_SERVER_ERROR.message });
-        return;
-    }
-}
-
-const authorizeDoctor = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        if (!req.user) {
-            res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
-            return;
-        }
-        if (req.user.role !== UserRole.DOCTOR) {
-            res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
-            return;
-        }
-        next();
-    }
-    catch (err) {
-        res.status(HTTP_INTERNAL_SERVER_ERROR.code).json({ error: HTTP_INTERNAL_SERVER_ERROR.message });
     }
 }
-
-// const AuthorizeSuperOrWriteAdmin = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         if (!req.admin) {
-//             res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
-//             return;
-//         }
-//         if (req.admin.privilegeLevel !== AdminPrivilege.SUPER && req.admin.privilegeLevel !== AdminPrivilege.WRITE) {
-//             res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
-//             return;
-//         }
-//         next();
-//     }
-//     catch (err) {
-//         res.status(HTTP_INTERNAL_SERVER_ERROR.code).json({ error: HTTP_INTERNAL_SERVER_ERROR.message });
-//         return;
-//     }
-// }
 
 export {
-    authenticateUser,
-    authorizeUser,
-    authorizeDoctor,
-    // AuthorizeSuperOrWriteAdmin
+    authenticate,
+    authorize,
 }

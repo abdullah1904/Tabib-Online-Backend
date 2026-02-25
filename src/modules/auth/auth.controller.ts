@@ -44,7 +44,7 @@ export class AuthControllers {
         catch (error) {
             const prismaError = error as { code?: string; meta?: { target?: string[] } };
             if (prismaError.code === 'P2002') {
-                res.status(HTTP_BAD_REQUEST.code).json({ error: 'User with this email, phone, or verification document already exists' });
+                res.status(HTTP_BAD_REQUEST.code).json({ error: 'User with this email, phone, or verification info already exists' });
                 return;
             }
             next(error);

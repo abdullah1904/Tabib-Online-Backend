@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpStatusCode } from "../utils/constants";
-import { HTTPError } from "../common/error";
+import { HTTPError } from "../types";
 
 const {
     HTTP_INTERNAL_SERVER_ERROR

@@ -19,7 +19,7 @@ export const registerSchema = joi.object({
             'string.pattern.base':
                 'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.',
         }),
-    role: joi.number().valid(...Object.values([UserRole.USER, UserRole.DOCTOR, UserRole.HOSPITAL])).default(UserRole.USER).optional(),
+    role: joi.number().valid(...Object.values([UserRole.USER, UserRole.DOCTOR, UserRole.HOSPITAL])).required(),
 });
 
 export const loginSchema = joi.object({

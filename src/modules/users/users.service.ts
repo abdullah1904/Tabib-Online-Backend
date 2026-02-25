@@ -1,8 +1,12 @@
 import { Prisma } from "../../generated/prisma/client";
 import prisma from "../../lib/prisma";
+import { HTTPError } from "../../types";
 import { deleteCloudinaryImage } from "../../utils";
-import { DoctorApplicationStatus, UserRole } from "../../utils/constants";
+import { HttpStatusCode, UserRole } from "../../utils/constants";
 
+const {
+    HTTP_NOT_FOUND
+} = HttpStatusCode;
 export class UsersService {
     async create(user: Prisma.UsersCreateInput) {
         const newUser = await prisma.users.create({
@@ -26,7 +30,7 @@ export class UsersService {
                 }
             });
         }
-        if(user.role == UserRole.DOCTOR) {
+        if (user.role == UserRole.DOCTOR) {
             await prisma.professionalInfos.create({
                 data: {
                     user: {
@@ -37,9 +41,8 @@ export class UsersService {
                     specialization: 0,
                     yearsOfExperience: 0,
                     PMDCRedgNo: "",
-                    PMDCRedgDate: '',
+                    PMDCRedgDate: new Date(),
                     PMDCLicenseDocumentURL: "",
-                    PMDCVerficationStatus: undefined,
                 }
             })
         }
@@ -49,30 +52,33 @@ export class UsersService {
         return await prisma.users.findMany();
     }
     async findByEmail(email: string) {
-        return await prisma.users.findFirst({
+        const user = await prisma.users.findFirst({
             where: { email }
         });
+        if (!user) {
+            throw new HTTPError("User not found", HTTP_NOT_FOUND.code);
+        }
+        return user;
     }
     async findById(id: string) {
-        return await prisma.users.findUnique({
+        const user = await prisma.users.findUnique({
             where: { id }
         });
+        if (!user) {
+            throw new HTTPError("User not found", HTTP_NOT_FOUND.code);
+        }
+        return user;
     }
     async update(id: string, data: Prisma.UsersUpdateInput) {
+        const user = await prisma.users.findUnique({
+            where: { id }
+        });
+        if (!user) {
+            throw new HTTPError("User not found", HTTP_NOT_FOUND.code);
+        }
         return await prisma.users.update({
             where: { id },
             data
-        });
-    }
-    async delete(id: string) {
-        return await prisma.users.delete({
-            where: { id }
-        });
-    }
-
-    async getUserProfile(userId: string) {
-        return await prisma.users.findUnique({
-            where: { id: userId },
         });
     }
 
@@ -108,14 +114,17 @@ export class UsersService {
 
     async getProfessionalInfo(userId: string) {
         return await prisma.professionalInfos.findUnique({
-            where: { userId }
+            where: { userId },
         });
     }
 
     async updateProfessionalInfo(userId: string, data: Prisma.ProfessionalInfosUpdateInput) {
         return await prisma.professionalInfos.update({
             where: { userId },
-            data
+            data: {
+                ...data,
+                isActive: true
+            }
         });
     }
 }
