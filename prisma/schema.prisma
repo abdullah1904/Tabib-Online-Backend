@@ -158,7 +158,7 @@ model Appointments {
   createdAt                DateTime      @default(now())
   updatedAt                DateTime      @updatedAt
   doctor                   Users         @relation("DoctorAppointments", fields: [doctorId], references: [id], onDelete: Cascade)
-  patient                  Users         @relation("UserAppointments", fields: [userId], references: [id], onDelete: Cascade)
+  user                  Users         @relation("UserAppointments", fields: [userId], references: [id], onDelete: Cascade)
   consultation             Consultations @relation(fields: [consultationId], references: [id], onDelete: Cascade)
 
   @@index([userId])
