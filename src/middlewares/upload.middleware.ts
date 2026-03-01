@@ -23,7 +23,7 @@ const upload = multer({
 });
 
 export const uploadImageMiddleware =
-  (uploadType: 'SIGN_UP' | 'PROFILE_UPDATE') =>
+  (uploadType: 'SIGN_UP' | 'PROFILE_UPDATE' | 'PMDC_VERIFICATION') =>
     (req: Request, res: Response, next: NextFunction) => {
       upload.single("image")(req, res, (err) => {
         if (err) {
@@ -49,6 +49,9 @@ export const uploadImageMiddleware =
               }
               if (uploadType === 'PROFILE_UPDATE') {
                 req.body.imageURL = result.secure_url;
+              }
+              if(uploadType === 'PMDC_VERIFICATION') {
+                req.body.pmdcLicenseDocumentURL = result.secure_url;
               }
 
               (req as any).uploadedFilePublicId = result.public_id;

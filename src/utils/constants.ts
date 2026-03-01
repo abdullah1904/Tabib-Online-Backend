@@ -422,20 +422,13 @@ enum DoctorPrefix {
     Surgeon = 14,
 }
 
-enum DoctorApplicationStatus {
-    PENDING = 0,
-    IN_PROGRESS = 1,
-    COMPLETED = 2,
-    ERROR = 3,
-}
-
-enum DoctorServiceType {
+enum ConsultationType {
     IN_PERSON = 1,
     AUDIO_CALL = 2,
     VIDEO_CALL = 3,
 }
 
-enum DoctorServiceDuration {
+enum ConsultationDuration {
     MIN_30 = 1,
     MIN_45 = 2,
     MIN_60 = 3,
@@ -451,10 +444,17 @@ enum DayOfWeek {
     SATURDAY = 6,
 }
 
-enum VerificationHandlerType {
+enum PMDCVerifierType {
     AGENT = 1,
     WORKER = 2,
 } 
+
+enum PMDCApplicationStatus {
+    PENDING = 0,
+    IN_PROGRESS = 1,
+    COMPLETED = 2,
+    ERROR = 3,
+}
 
 enum AppointmentStatus {
     PENDING = 0,
@@ -476,10 +476,10 @@ export {
     PostGraduateDegree,
     Specialization,
     DoctorPrefix,
-    DoctorApplicationStatus,
-    DoctorServiceType,
-    DoctorServiceDuration,
+    ConsultationType,
+    ConsultationDuration,
     DayOfWeek,
-    VerificationHandlerType,
+    PMDCVerifierType,
+    PMDCApplicationStatus,
     AppointmentStatus
 }

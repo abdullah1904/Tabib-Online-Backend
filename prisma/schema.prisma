@@ -8,33 +8,34 @@ datasource db {
 }
 
 model Users {
-  id                         String             @id @default(uuid())
-  fullName                   String
-  age                        Int
-  gender                     Int
-  email                      String
-  address                    String
-  phoneNumber                String
-  verificationDocumentType   Int
-  verificationDocumentNumber String
-  verificationDocumentURL    String
-  password                   String
-  role                       Int
-  suspendedTill              DateTime?
-  status                     Int                @default(0)
-  balance                    Float              @default(0)
-  imageURL                   String             @default("")
-  verifiedAt                 DateTime?
-  createdAt                  DateTime           @default(now())
-  updatedAt                  DateTime           @updatedAt
-  medicalInfo                MedicalRecords?
-  professionalInfo           ProfessionalInfos?
-  verifications              Verifications[]
-  doctorReviews              Reviews[]          @relation("DoctorReviews")
-  userReviews                Reviews[]          @relation("UserReviews")
-  consultations              Consultations[]
-  doctorAppointments         Appointments[]     @relation("DoctorAppointments")
-  patientAppointments        Appointments[]     @relation("UserAppointments")
+  id                          String                      @id @default(uuid())
+  fullName                    String
+  age                         Int
+  gender                      Int
+  email                       String
+  address                     String
+  phoneNumber                 String
+  verificationDocumentType    Int
+  verificationDocumentNumber  String
+  verificationDocumentURL     String
+  password                    String
+  role                        Int
+  suspendedTill               DateTime?
+  status                      Int                         @default(0)
+  balance                     Float                       @default(0)
+  imageURL                    String                      @default("")
+  verifiedAt                  DateTime?
+  createdAt                   DateTime                    @default(now())
+  updatedAt                   DateTime                    @updatedAt
+  medicalInfo                 MedicalRecords?
+  professionalInfo            ProfessionalInfos?
+  PMDCVerificationApplications PMDCVerificationApplication[]
+  verifications               Verifications[]
+  doctorReviews               Reviews[]                   @relation("DoctorReviews")
+  userReviews                 Reviews[]                   @relation("UserReviews")
+  consultations               Consultations[]
+  doctorAppointments          Appointments[]              @relation("DoctorAppointments")
+  patientAppointments         Appointments[]              @relation("UserAppointments")
 
   @@unique([email, verificationDocumentNumber, verificationDocumentType, phoneNumber])
 }
@@ -69,7 +70,7 @@ model MedicalRecords {
 model ProfessionalInfos {
   id                     String    @id @default(uuid())
   userId                 String    @unique
-  prefix                     Int                @default(1)
+  prefix                 Int       @default(1)
   medicalDegree          Int
   postGraduateDegree     Int
   specialization         Int
@@ -78,12 +79,28 @@ model ProfessionalInfos {
   PMDCRedgDate           DateTime
   PMDCLicenseDocumentURL String
   PMDCVerifiedAt         DateTime?
-  isActive                Boolean   @default(false)
+  isActive               Boolean   @default(false)
   isPMDCEditable         Boolean   @default(true)
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PMDCVerificationApplication {
+  id         String    @id @default(uuid())
+  doctorId   String
+  PMDCRedgNo             String
+  PMDCRedgDate           DateTime
+  PMDCLicenseDocumentURL String
+  status     Int       @default(0)
+  reviewedAt DateTime?
+  reviewedBy Int?
+  results    String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  doctor Users @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 }
 
 model Reviews {
@@ -96,48 +113,52 @@ model Reviews {
   updatedAt DateTime @updatedAt
   doctor    Users    @relation("DoctorReviews", fields: [doctorId], references: [id], onDelete: Cascade)
   user      Users    @relation("UserReviews", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, userId])
 }
 
 model Consultations {
-  id                    String                  @id @default(uuid())
-  title                 String
-  type                  Int
-  price                 Int
-  duration              Int
-  time                  DateTime
-  location              String?
-  allowCustom           Boolean                 @default(false)
-  doctorId              String
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  doctor                Users                   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  consultationSlots     ConsultationSlots[]
-  appointments          Appointments[]
+  id                String              @id @default(uuid())
+  title             String
+  type              Int
+  price             Int
+  duration          Int
+  time              DateTime
+  location          String?
+  allowCustom       Boolean             @default(false)
+  doctorId          String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  doctor            Users               @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  consultationSlots ConsultationSlots[]
+  appointments      Appointments[]
 }
 
 model ConsultationSlots {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   serviceId String
   dayOfWeek Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   service   Consultations @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
 model Appointments {
-  id                       String   @id @default(uuid())
+  id                       String        @id @default(uuid())
   userId                   String
   doctorId                 String
   consultationId           String
   appointmentDate          DateTime
   appointmentTime          DateTime
   additionalNotes          String?
-  healthInfoSharingConsent Boolean  @default(false)
-  status                   Int
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-  doctor                   Users    @relation("DoctorAppointments", fields: [doctorId], references: [id], onDelete: Cascade)
-  patient                  Users    @relation("UserAppointments", fields: [userId], references: [id], onDelete: Cascade)
+  healthInfoSharingConsent Boolean       @default(false)
+  status                   Int           @default(0)
+  pendingAmount            Int
+  totalAmount              Int
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  doctor                   Users         @relation("DoctorAppointments", fields: [doctorId], references: [id], onDelete: Cascade)
+  patient                  Users         @relation("UserAppointments", fields: [userId], references: [id], onDelete: Cascade)
   consultation             Consultations @relation(fields: [consultationId], references: [id], onDelete: Cascade)
 
   @@index([userId])

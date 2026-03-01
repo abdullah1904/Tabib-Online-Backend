@@ -13,13 +13,16 @@ const generateJWT = (id: string, type: "ACCESS" | "REFRESH") => {
     }
 }
 
-const getCloudinaryFolderName = (type: 'SIGN_UP' | 'PROFILE_UPDATE')=>{
+const getCloudinaryFolderName = (type: 'SIGN_UP' | 'PROFILE_UPDATE' | 'PMDC_VERIFICATION')=>{
     let folder = "tabib-online";
     if (type === 'SIGN_UP') {
         folder = "tabib-online/user-verifications-document";
     }
     if (type === 'PROFILE_UPDATE') {
         folder = "tabib-online/profile-images";
+    }
+    if (type === 'PMDC_VERIFICATION') {
+        folder = "tabib-online/pmdc-licences";
     }
     return folder;
 }

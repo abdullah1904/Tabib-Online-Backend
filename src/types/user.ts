@@ -6,7 +6,6 @@ export interface IUser {
   address: string;
   phoneNumber: string;
   role: number;
-  prefix: number;
   status: number;
   balance: number;
   imageURL: string;

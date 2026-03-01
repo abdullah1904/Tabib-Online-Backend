@@ -33,11 +33,10 @@ export class AuthControllers {
                 verificationDocumentNumber: value.verificationDocumentNumber,
                 verificationDocumentURL: value.verificationDocumentURL,
                 role: value.role ?? UserRole.USER,
-                prefix: value.role == UserRole.DOCTOR ? DoctorPrefix.Dr : 0,
             });
             res.status(HTTP_CREATED.code).json({
                 message: "User created successfully",
-
+                user
             });
             return;
         }

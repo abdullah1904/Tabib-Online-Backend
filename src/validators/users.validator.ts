@@ -51,3 +51,16 @@ export const pmdcInfoSchema = joi.object({
     pmdcRedgDate: joi.date().required(),
     pmdcLicenseDocumentURL: joi.string().uri().max(255).required(),
 });
+
+export const checkoutSchema = joi.object({
+    amount: joi.number().min(500).required(),
+});
+
+export const payoutSchema = joi.object({
+    amount: joi.number().min(500).required(),
+    cardNumber: joi.string().creditCard().required(),
+    expMonth: joi.number().integer().min(1).max(12).required(),
+    expYear: joi.number().integer().min(new Date().getFullYear()).max(new Date().getFullYear() + 20).required(),
+    cvc: joi.string().pattern(/^\d{3,4}$/).required(),
+    name: joi.string().min(2).max(100).required(),
+});

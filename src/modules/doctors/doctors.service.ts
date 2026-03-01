@@ -1,7 +1,9 @@
+import { Prisma } from "../../generated/prisma/client";
 import prisma from "../../lib/prisma";
 import { HTTPError } from "../../types";
 import { HttpStatusCode, UserRole } from "../../utils/constants";
 import { matchDoctor } from "./workflows/matching.workflow";
+import { reviewRatings } from "./workflows/reviewRatings.workflow";
 
 const {
     HTTP_NOT_FOUND
@@ -99,28 +101,61 @@ export class DoctorsServices {
     async findById(id: string) {
         const doctor = await prisma.users.findUnique({
             where: { id, role: UserRole.DOCTOR },
-            include: { professionalInfo: true, consultations: true },
+            include: { 
+                professionalInfo: true, 
+                doctorReviews: {
+                    select: {
+                        createdAt: true,
+                        rating: true,
+                        comment: true,
+                        user: true,
+                    }
+                }, 
+                consultations: {
+                include: {
+                    consultationSlots: true,
+                }
+            } },
         });
         if (!doctor) {
             throw new HTTPError("Doctor not found", HTTP_NOT_FOUND.code);
         }
-        return doctor;
+        const averageRating = doctor.doctorReviews.length
+            ? doctor.doctorReviews.reduce((sum, r) => sum + r.rating, 0) / doctor.doctorReviews.length
+            : 0;
+        return {
+            ...doctor,
+            averageRating,
+        };
     }
-    async createReview(userId: string, doctorId: string, comment: string) {
+    async createReview(data: {comment: string, doctorId: string, userId: string}) {
+        const doctor = await prisma.users.findUnique({
+            where: { id: data.doctorId, role: UserRole.DOCTOR },
+        });
+        if (!doctor) {
+            throw new HTTPError("Doctor not found", HTTP_NOT_FOUND.code);
+        }
+        const ratings = await reviewRatings(data.comment);
+        const review = await prisma.reviews.create({
+            data: {
+                ...data,
+                rating: ratings
+            }
+        });
+        return review;
+    }
+    async getReviewsByDoctorId(doctorId: string) {
+        console.log(doctorId);
         const doctor = await prisma.users.findUnique({
             where: { id: doctorId, role: UserRole.DOCTOR },
         });
         if (!doctor) {
             throw new HTTPError("Doctor not found", HTTP_NOT_FOUND.code);
         }
-        const review = await prisma.reviews.create({
-            data: {
-                userId,
-                doctorId,
-                comment,
-                rating: 5, // For simplicity, we're assigning a default rating. In a real application, you'd likely want to accept this as an input.
-            }
+        const reviews = await prisma.reviews.findMany({
+            where: { doctorId },
+            include: { user: { select: { fullName: true, email: true, imageURL: true } } },
         });
-        return review;
+        return reviews;
     }
 }

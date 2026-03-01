@@ -57,15 +57,22 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
-const authorize = (userRole: UserRole) => {
+const authorize = (userRole: UserRole | UserRole[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
             if (!req.user) {
                 res.status(HTTP_UNAUTHORIZED.code).json({ error: "Unauthorized access." });
             }
-            if (req.user.role !== userRole) {
-                res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
-                return;
+            if (Array.isArray(userRole)) {
+                if (!userRole.includes(req.user.role)) {
+                    res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
+                    return;
+                }
+            } else {
+                if (req.user.role !== userRole) {
+                    res.status(HTTP_FORBIDDEN.code).json({ error: "Forbidden. You don't have enough privilege to perform this action."});
+                    return;
+                }
             }
             next();
         }

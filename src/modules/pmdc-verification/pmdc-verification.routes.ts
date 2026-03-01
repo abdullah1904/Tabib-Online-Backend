@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { PMDCVerificationController } from "./pmdc-verification.controller";
+import { uploadImageMiddleware } from "../../middlewares/upload.middleware";
+
+const pmdcVerificationRouter = Router();
+const pmdcVerificationController = new PMDCVerificationController();
+
+pmdcVerificationRouter.post("/:doctorId", uploadImageMiddleware('PMDC_VERIFICATION'),pmdcVerificationController.createVerificationApplication);
+pmdcVerificationRouter.get("/:doctorId", pmdcVerificationController.listVerificationApplications);
+
+export default pmdcVerificationRouter;

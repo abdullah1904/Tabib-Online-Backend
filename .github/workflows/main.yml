@@ -22,31 +22,31 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            mkdir -p ~/tabib_online_backend
+  #   steps:
+  #     - name: Deploy to Server
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.SERVER_HOST }}
+  #         username: ${{ secrets.SERVER_USER }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         script: |
+  #           mkdir -p ~/tabib_online_backend
             
-            echo "${{ secrets.ENV_FILE }}" | base64 -d > ~/tabib_online_backend/.env
+  #           echo "${{ secrets.ENV_FILE }}" | base64 -d > ~/tabib_online_backend/.env
             
             
-            docker stop tabib_online_backend || true
-            docker rm tabib_online_backend || true
-            docker image prune -f
-            docker pull ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
+  #           docker stop tabib_online_backend || true
+  #           docker rm tabib_online_backend || true
+  #           docker image prune -f
+  #           docker pull ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
 
-            docker run -d \
-              --name tabib_online_backend \
-              -p 3004:3004 \
-              --env-file ~/tabib_online_backend/.env \
-              --restart unless-stopped \
-              ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest
+  #           docker run -d \
+  #             --name tabib_online_backend \
+  #             -p 3004:3004 \
+  #             --env-file ~/tabib_online_backend/.env \
+  #             --restart unless-stopped \
+  #             ${{ secrets.DOCKER_USERNAME }}/tabib_online_backend:latest

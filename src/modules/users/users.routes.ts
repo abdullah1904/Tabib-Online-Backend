@@ -13,5 +13,7 @@ usersRouter.put("/profile/medical", authorize(UserRole.USER),usersControllers.up
 usersRouter.get("/profile/professional", authorize(UserRole.DOCTOR),usersControllers.getProfessionalInfoController);
 usersRouter.put("/profile/professional", authorize(UserRole.DOCTOR),usersControllers.updateProfessionalInfoController);
 usersRouter.put("/profile/pmdc", authorize(UserRole.DOCTOR),usersControllers.updatePmdcInfoController);
+usersRouter.get("/profile/wallet/checkouts", authorize(UserRole.USER), usersControllers.listCheckoutsController);
+usersRouter.post("/profile/wallet/checkouts", authorize(UserRole.USER), usersControllers.createCheckoutController);
 
 export default usersRouter;

@@ -13,6 +13,7 @@ import Stripe from "stripe";
 import appRouter from "./routes";
 import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./socketHandlers";
 import { StripeWebHook } from "./webhooks";
+import "./modules/pmdc-verification/workers/pmdcVerification.worker";
 
 
 

@@ -8,6 +8,9 @@ const doctorsControllers = new DoctorsControllers();
 
 
 doctorsRouter.get("/recommend",authorize(UserRole.USER), doctorsControllers.listRecommendedDoctorsController);
+doctorsRouter.get("/reviews", authorize(UserRole.DOCTOR),doctorsControllers.listReviewsController);
+doctorsRouter.get("/:id", doctorsControllers.getDoctorByIdController);
+doctorsRouter.post("/:doctorId/reviews", authorize(UserRole.USER), doctorsControllers.createReviewController);
 
 
 export default doctorsRouter;
