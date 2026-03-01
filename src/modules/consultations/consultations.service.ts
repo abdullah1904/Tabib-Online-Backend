@@ -31,6 +31,12 @@ export class ConsultationsService {
             data
         });
     }
+    async findById(id: string) {
+        return await prisma.consultations.findUnique({
+            where: { id },
+            include: { consultationSlots: true }
+        });
+    }
     async update(id: string, data: Prisma.ConsultationsUpdateInput) {
         return await prisma.consultations.update({
             where: { id },

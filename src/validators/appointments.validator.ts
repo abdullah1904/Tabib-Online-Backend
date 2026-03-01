@@ -32,7 +32,6 @@ export const appointmentValidator = joi.object({
         }).empty(''),
 
     healthInfoSharingConsent: joi.boolean()
-        .valid(true)
         .messages({
             "any.only": "Health sharing consent is required"
         }),

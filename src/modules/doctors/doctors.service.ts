@@ -145,7 +145,6 @@ export class DoctorsServices {
         return review;
     }
     async getReviewsByDoctorId(doctorId: string) {
-        console.log(doctorId);
         const doctor = await prisma.users.findUnique({
             where: { id: doctorId, role: UserRole.DOCTOR },
         });

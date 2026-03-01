@@ -4,6 +4,7 @@ import { config } from "./utils/config";
 import { stripe } from ".";
 import { logger } from "./utils/logger";
 import Stripe from "stripe";
+import prisma from "./lib/prisma";
 
 const {
     HTTP_OK,
@@ -32,22 +33,24 @@ export const StripeWebHook = async (req: Request, res: Response, next: NextFunct
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object as Stripe.Checkout.Session;
 
-            const userIdStr = session.metadata?.userId;
+            const userId = session.metadata?.userId;
             const amount = parseFloat(session.metadata?.amount || '0');
 
-            if (!userIdStr || !amount) {
+            if (!userId || !amount) {
                 logger.error('Missing userId or amount in session metadata');
                 res.status(HTTP_BAD_REQUEST.code).json({ error: 'Invalid session metadata' });
                 return;
             }
 
-            const userId = parseInt(userIdStr, 10);
-
             if (session.payment_status === 'paid') {
-
-                // await db.update(UserTable).set({
-                //     balance: sql`${UserTable.balance} + ${amount}`
-                // }).where(eq(UserTable.id, userId));
+                await prisma.users.update({
+                    where: { id: userId },
+                    data: {
+                        balance: {
+                            increment: amount
+                        }
+                    }
+                });
 
                 logger.info(`Wallet top-up successful for user ${userId}: ${amount} PKR`);
                 return res.status(HTTP_OK.code).json({ message: 'Wallet top-up successful' });
