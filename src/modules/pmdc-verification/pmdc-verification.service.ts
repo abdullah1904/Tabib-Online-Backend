@@ -1,8 +1,8 @@
-import { Prisma } from "../../generated/prisma/client";
-import prisma from "../../lib/prisma";
-import { HTTPError } from "../../types";
-import { HttpStatusCode, UserRole } from "../../utils/constants";
-import pmdcVerificationQueue from "./queues/pmdcVerification.queue";
+import { Prisma } from "../../../generated/prisma/client.js";
+import prisma from "../../lib/prisma.js";
+import { HTTPError } from "../../types/index.js";
+import { HttpStatusCode, UserRole } from "../../utils/constants.js";
+import pmdcVerificationQueue from "./queues/pmdcVerification.queue.js";
 
 const {
     HTTP_BAD_REQUEST,

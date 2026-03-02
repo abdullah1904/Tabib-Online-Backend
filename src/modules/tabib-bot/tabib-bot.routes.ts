@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { TabibBotControllers } from "./tabib-bot.controller";
+import { TabibBotControllers } from "./tabib-bot.controller.js";
 
 
 const tabibBotRouter = Router();

@@ -10,8 +10,9 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+RUN pnpm db:generate
 RUN pnpm build
 
 EXPOSE 3004
 
-CMD ["node", "dist/src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && pnpm start"]

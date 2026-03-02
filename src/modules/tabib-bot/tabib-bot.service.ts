@@ -3,10 +3,10 @@ import { RunnableSequence } from '@langchain/core/runnables';
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 import { Annotation, END, START, StateGraph, MemorySaver } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { config } from '../../utils/config';
-import { removeThinking } from '../../utils';
-import { medicalKnowledgeSearchTool } from './tools/medicalKnoweldgeSearch.tool';
-import { tabibbotPrompt } from './prompts/tabibBotSystem.prompt';
+import { config } from '../../utils/config.js';
+import { removeThinking } from '../../utils/index.js';
+import { medicalKnowledgeSearchTool } from './tools/medicalKnoweldgeSearch.tool.js';
+import { tabibbotPrompt } from './prompts/tabibBotSystem.prompt.js';
 
 
 const checkpointer = new MemorySaver();

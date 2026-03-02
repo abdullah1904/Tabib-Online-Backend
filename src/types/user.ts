@@ -10,3 +10,10 @@ export interface IUser {
   balance: number;
   imageURL: string;
 }
+
+export interface IProfessionalInfo {
+  specialization: number;
+  yearsOfExperience: number;
+  PMDCVerifiedAt: Date | null;
+  prefix: number
+}

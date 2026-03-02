@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
-import { logger } from "./utils/logger";
+import { logger } from "./utils/logger.js";
 import { AIMessage, ToolMessage } from "langchain";
-import { TabibBotService } from "./modules/tabib-bot/tabib-bot.service";
-import { UsersService } from "./modules/users/users.service";
+import { TabibBotService } from "./modules/tabib-bot/tabib-bot.service.js";
+import { UsersService } from "./modules/users/users.service.js";
 
 const socketUsersMap: Map<string, string> = new Map();
 const tabibBotService = new TabibBotService();

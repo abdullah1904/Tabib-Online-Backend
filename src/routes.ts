@@ -1,13 +1,13 @@
 import { Router } from "express";
-import authRouter from "./modules/auth/auth.routes";
-import usersRouter from "./modules/users/users.routes";
-import tabibBotRouter from "./modules/tabib-bot/tabib-bot.routes";
-import { authenticate, authorize } from "./middlewares/auth.middleware";
-import doctorsRouter from "./modules/doctors/doctors.routes";
-import consultationsRouter from "./modules/consultations/consultations.routes";
-import { UserRole } from "./utils/constants";
-import appointmentsRouter from "./modules/appointments/appointments.routes";
-import pmdcVerificationRouter from "./modules/pmdc-verification/pmdc-verification.routes";
+import authRouter from "./modules/auth/auth.routes.js";
+import usersRouter from "./modules/users/users.routes.js";
+import tabibBotRouter from "./modules/tabib-bot/tabib-bot.routes.js";
+import { authenticate, authorize } from "./middlewares/auth.middleware.js";
+import doctorsRouter from "./modules/doctors/doctors.routes.js";
+import consultationsRouter from "./modules/consultations/consultations.routes.js";
+import { UserRole } from "./utils/constants.js";
+import appointmentsRouter from "./modules/appointments/appointments.routes.js";
+import pmdcVerificationRouter from "./modules/pmdc-verification/pmdc-verification.routes.js";
 
 const appRouter = Router();
 

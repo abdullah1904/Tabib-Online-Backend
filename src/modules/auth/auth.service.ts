@@ -1,8 +1,8 @@
-import { VerificationsService } from "../../common/services/verification.service";
-import { Prisma } from "../../generated/prisma/client";
-import { HTTPError } from "../../types";
-import { AccountStatus, HttpStatusCode, OTPType, UserRole,  } from "../../utils/constants";
-import { UsersService } from "../users/users.service";
+import { Prisma } from "../../../generated/prisma/client.js";
+import { VerificationsService } from "../../common/services/verification.service.js";
+import { HTTPError } from "../../types/index.js";
+import { AccountStatus, HttpStatusCode, OTPType } from "../../utils/constants.js";
+import { UsersService } from "../users/users.service.js";
 import bcrypt from "bcrypt";
 
 const {

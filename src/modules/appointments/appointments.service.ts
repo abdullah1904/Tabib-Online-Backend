@@ -1,9 +1,9 @@
-import { Prisma } from "../../generated/prisma/client";
-import prisma from "../../lib/prisma";
-import { HTTPError } from "../../types";
-import { AppointmentStatus, HttpStatusCode } from "../../utils/constants";
-import { ConsultationsService } from "../consultations/consultations.service";
-import { UsersService } from "../users/users.service";
+import { Prisma } from "../../../generated/prisma/client.js";
+import prisma from "../../lib/prisma.js";
+import { HTTPError } from "../../types/index.js";
+import { AppointmentStatus, HttpStatusCode } from "../../utils/constants.js";
+import { ConsultationsService } from "../consultations/consultations.service.js";
+import { UsersService } from "../users/users.service.js";
 
 const {
     HTTP_NOT_FOUND,

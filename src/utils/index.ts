@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken"
-import { config } from "./config"
+import { config } from "./config.js"
 import { createTransport } from "nodemailer";
-import { logger } from "./logger";
-import { cloudinary } from "..";
+import { logger } from "./logger.js";
+import { cloudinary } from "../index.js";
 
 const generateJWT = (id: string, type: "ACCESS" | "REFRESH") => {
     if (type === "ACCESS") {

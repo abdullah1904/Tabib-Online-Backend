@@ -1,5 +1,5 @@
 import joi from "joi";
-import { Gender, UserRole, VerificationDocumentType, OTPType } from "../utils/constants";
+import { Gender, UserRole, VerificationDocumentType, OTPType } from "../utils/constants.js";
 
 export const registerSchema = joi.object({
     fullName: joi.string().max(100).required(),

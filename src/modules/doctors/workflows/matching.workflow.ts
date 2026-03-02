@@ -1,8 +1,8 @@
 import { ChatGroq } from "@langchain/groq";
 import {RunnableSequence} from "@langchain/core/runnables";
-import { config } from "../../../utils/config";
-import { matchingPrompt } from "../prompts/matchingSystem.prompt";
-import { matchingResponseSchema } from "../schemas/matching.schema";
+import { config } from "../../../utils/config.js";
+import { matchingPrompt } from "../prompts/matchingSystem.prompt.js";
+import { matchingResponseSchema } from "../schemas/matching.schema.js";
 
 const model = new ChatGroq({
     model: config.GROQ_SECONDARY_MODEL,

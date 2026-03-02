@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { AppointmentsService } from "./appointments.service";
-import { appointmentValidator } from "../../validators/appointments.validator";
-import { AppointmentStatus, HttpStatusCode } from "../../utils/constants";
-import { UsersService } from "../users/users.service";
+import { AppointmentsService } from "./appointments.service.js";
+import { appointmentValidator } from "../../validators/appointments.validator.js";
+import { HttpStatusCode } from "../../utils/constants.js";
 
 const {
     HTTP_OK,

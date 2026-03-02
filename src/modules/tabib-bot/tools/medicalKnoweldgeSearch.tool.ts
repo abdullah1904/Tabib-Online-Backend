@@ -3,7 +3,7 @@ import { z } from "zod";
 import { CohereEmbeddings } from "@langchain/cohere";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { Document } from "langchain";
-import { config } from "../../../utils/config";
+import { config } from "../../../utils/config.js";
 
 const embeddings = new CohereEmbeddings({
     model: config.COHERE_EMBEDDING_MODEL,

@@ -2,18 +2,18 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
 import helmet from "helmet";
-import errorMiddleware from "./middlewares/error.middleware";
-import loggingMiddleware from "./middlewares/logging.middleware";
-import { config } from "./utils/config";
-import { logger } from "./utils/logger";
+
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from 'http';
 import { Server } from "socket.io";
 import Stripe from "stripe";
-import appRouter from "./routes";
-import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./socketHandlers";
-import { StripeWebHook } from "./webhooks";
-import "./modules/pmdc-verification/workers/pmdcVerification.worker";
+import { StripeWebHook } from "./webhooks.js";
+import loggingMiddleware from "./middlewares/logging.middleware.js";
+import appRouter from "./routes.js";
+import errorMiddleware from "./middlewares/error.middleware.js";
+import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./socketHandlers.js";
+import { config } from "./utils/config.js";
+import { logger } from "./utils/logger.js";
 
 
 

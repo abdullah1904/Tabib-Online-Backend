@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { UsersControllers } from "./users.controller";
-import { uploadImageMiddleware } from "../../middlewares/upload.middleware";
-import { authorize } from "../../middlewares/auth.middleware";
-import { UserRole } from "../../utils/constants";
+import { UsersControllers } from "./users.controller.js";
+import { uploadImageMiddleware } from "../../middlewares/upload.middleware.js";
+import { authorize } from "../../middlewares/auth.middleware.js";
+import { UserRole } from "../../utils/constants.js";
 
 const usersRouter = Router();
 const usersControllers = new UsersControllers();

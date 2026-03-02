@@ -1,10 +1,8 @@
-import { stripe } from "../..";
-import { Prisma } from "../../generated/prisma/client";
-import prisma from "../../lib/prisma";
-import { HTTPError } from "../../types";
-import { deleteCloudinaryImage } from "../../utils";
-import { config } from "../../utils/config";
-import { HttpStatusCode, UserRole } from "../../utils/constants";
+import prisma from "../../lib/prisma.js";
+import { HTTPError } from "../../types/index.js";
+import { deleteCloudinaryImage } from "../../utils/index.js";
+import { HttpStatusCode, UserRole } from "../../utils/constants.js";
+import { Prisma } from "../../../generated/prisma/client.js";
 
 const {
     HTTP_NOT_FOUND

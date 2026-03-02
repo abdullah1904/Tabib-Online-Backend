@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { logger } from "../utils/logger";
-import { HttpStatusCode } from "../utils/constants";
+import { logger } from "../utils/logger.js";
+import { HttpStatusCode } from "../utils/constants.js";
 
 const {
     HTTP_INTERNAL_SERVER_ERROR

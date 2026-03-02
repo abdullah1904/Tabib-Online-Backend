@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { PMDCVerificationController } from "./pmdc-verification.controller";
-import { uploadImageMiddleware } from "../../middlewares/upload.middleware";
+import { PMDCVerificationController } from "./pmdc-verification.controller.js";
+import { uploadImageMiddleware } from "../../middlewares/upload.middleware.js";
 
 const pmdcVerificationRouter = Router();
 const pmdcVerificationController = new PMDCVerificationController();

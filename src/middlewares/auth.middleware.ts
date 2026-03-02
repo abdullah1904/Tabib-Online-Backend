@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { AccountStatus, HttpStatusCode, UserRole } from "../utils/constants";
+import { AccountStatus, HttpStatusCode, UserRole } from "../utils/constants.js";
 import jwt from "jsonwebtoken";
-import { config } from "../utils/config";
-import prisma from "../lib/prisma";
+import { config } from "../utils/config.js";
+import prisma from "../lib/prisma.js";
 
 
 const {

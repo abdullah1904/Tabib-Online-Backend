@@ -1,8 +1,8 @@
 import { ChatGroq } from "@langchain/groq";
 import {RunnableSequence} from "@langchain/core/runnables";
-import { config } from "../../../utils/config";
-import { reviewPrompt } from "../prompts/reviewRatingsSystem.prompt";
-import { reviewResponseSchema } from "../schemas/reviewRatings.schema";
+import { config } from "../../../utils/config.js";
+import { reviewPrompt } from "../prompts/reviewRatingsSystem.prompt.js";
+import { reviewResponseSchema } from "../schemas/reviewRatings.schema.js";
 
 
 const model = new ChatGroq({

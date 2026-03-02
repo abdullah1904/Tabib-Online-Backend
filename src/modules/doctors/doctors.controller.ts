@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { DoctorsServices } from "./doctors.service";
-import { HttpStatusCode } from "../../utils/constants";
-import { reviewValidator } from "../../validators/doctors.validator";
+import { DoctorsServices } from "./doctors.service.js";
+import { HttpStatusCode } from "../../utils/constants.js";
+import { reviewValidator } from "../../validators/doctors.validator.js";
 
 const {
     HTTP_OK,

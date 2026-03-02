@@ -1,19 +1,19 @@
 import { Job, Worker } from "bullmq";
-import { logger } from "../../../utils/logger";
-import { pmdcVerificationAgent } from "../workflows/pmdcVerification.workflow";
-import { config } from "../../../utils/config";
-import prisma from "../../../lib/prisma";
+import { logger } from "../../../utils/logger.js";
+import { pmdcVerificationAgent } from "../workflows/pmdcVerification.workflow.js";
+import { config } from "../../../utils/config.js";
+import prisma from "../../../lib/prisma.js";
 import {
   PMDCApplicationStatus,
   PMDCVerifierType,
   UserRole,
-} from "../../../utils/constants";
+} from "../../../utils/constants.js";
 import {
   getMedicalDegreeText,
   getPostGraduateDegreeText,
   getSpecializationText,
   sendEmail,
-} from "../../../utils";
+} from "../../../utils/index.js";
 
 const pmdcVerificationWorker = new Worker(
   "doctor-verification",

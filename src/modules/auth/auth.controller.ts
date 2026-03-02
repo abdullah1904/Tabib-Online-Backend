@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { changePasswordSchema, emailVerificationSchema, forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema, sendOTPSchema } from "../../validators/auth.validator";
-import { DoctorPrefix, HttpStatusCode, UserRole } from "../../utils/constants";
-import { generateJWT } from "../../utils";
-import { AuthService } from "./auth.service";
+import { HttpStatusCode, UserRole } from "../../utils/constants.js";
+import { AuthService } from "./auth.service.js";
+import { changePasswordSchema, emailVerificationSchema, loginSchema, registerSchema, resetPasswordSchema, sendOTPSchema } from "../../validators/auth.validator.js";
+import { generateJWT } from "../../utils/index.js";
+
 
 const {
     HTTP_CREATED,

@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { DoctorPrefix, Gender, MedicalDegree, PostGraduateDegree, Specialization } from '../utils/constants';
+import { DoctorPrefix, Gender, MedicalDegree, PostGraduateDegree, Specialization } from '../utils/constants.js';
 
 export const profileSchema = joi.object({
     imageURL: joi.string().uri().max(255).optional(),

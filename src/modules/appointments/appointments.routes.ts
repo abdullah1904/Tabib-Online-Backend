@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AppointmentsController } from "./appointments.controller";
-import { authorize } from "../../middlewares/auth.middleware";
-import { UserRole } from "../../utils/constants";
+import { AppointmentsController } from "./appointments.controller.js";
+import { authorize } from "../../middlewares/auth.middleware.js";
+import { UserRole } from "../../utils/constants.js";
 
 const appointmentsRouter = Router();
 const appointmentController = new AppointmentsController();

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { UsersService } from "./users.service";
-import { checkoutSchema, medicalProfileSchema, payoutSchema, pmdcInfoSchema, professionalInfoSchema, profileSchema } from "../../validators/users.validator";
-import { HttpStatusCode } from "../../utils/constants";
-import { stripe } from "../..";
-import { config } from "../../utils/config";
+import { UsersService } from "./users.service.js";
+import { checkoutSchema, medicalProfileSchema, payoutSchema, pmdcInfoSchema, professionalInfoSchema, profileSchema } from "../../validators/users.validator.js";
+import { HttpStatusCode } from "../../utils/constants.js";
+import { stripe } from "../../index.js";
+import { config } from "../../utils/config.js";
 import Stripe from "stripe";
 
 const {

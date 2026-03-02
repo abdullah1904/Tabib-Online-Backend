@@ -1,5 +1,5 @@
 import joi from "joi";
-import { ConsultationDuration, ConsultationType, DayOfWeek,  } from "../utils/constants";
+import { ConsultationDuration, ConsultationType, DayOfWeek,  } from "../utils/constants.js";
 
 export const consultationValidator = joi.object({
     title: joi.string().max(100).required(),

@@ -1,8 +1,8 @@
 import { ChatGroq } from "@langchain/groq";
 import { createAgent } from "langchain";
-import { config } from "../../../utils/config";
-import { pmdcVerificationResponseSchema, pmdcVerificationStateSchema } from "../schemas/pmdcVerification.schema";
-import { pmdcDoctorSearchTool } from "../tools/pmdcDoctorSearch.tool";
+import { config } from "../../../utils/config.js";
+import { pmdcVerificationResponseSchema, pmdcVerificationStateSchema } from "../schemas/pmdcVerification.schema.js";
+import { pmdcDoctorSearchTool } from "../tools/pmdcDoctorSearch.tool.js";
 
 const model = new ChatGroq({
     model: config.GROQ_SECONDARY_MODEL,

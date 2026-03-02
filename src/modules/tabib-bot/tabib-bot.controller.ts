@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { TabibBotService } from "./tabib-bot.service";
-import { HttpStatusCode } from "../../utils/constants";
+import { TabibBotService } from "./tabib-bot.service.js";
+import { HttpStatusCode } from "../../utils/constants.js";
 
 const {
     HTTP_OK

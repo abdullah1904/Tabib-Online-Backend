@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { pmdcVerificationValidator } from "../../validators/pmdc-verification.validator";
-import { HttpStatusCode } from "../../utils/constants";
-import { PMDCVerificationService } from "./pmdc-verification.service";
+import { pmdcVerificationValidator } from "../../validators/pmdc-verification.validator.js";
+import { HttpStatusCode } from "../../utils/constants.js";
+import { PMDCVerificationService } from "./pmdc-verification.service.js";
 
 const {
     HTTP_BAD_REQUEST

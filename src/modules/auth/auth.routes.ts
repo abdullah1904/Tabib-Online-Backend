@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { uploadImageMiddleware } from "../../middlewares/upload.middleware";
-import { AuthControllers } from "./auth.controller";
-import { authenticate } from "../../middlewares/auth.middleware";
+import { AuthControllers } from "./auth.controller.js";
+import { uploadImageMiddleware } from "../../middlewares/upload.middleware.js";
+import { authenticate } from "../../middlewares/auth.middleware.js";
+
 
 const authRouter = Router();
 const authControllers = new AuthControllers();

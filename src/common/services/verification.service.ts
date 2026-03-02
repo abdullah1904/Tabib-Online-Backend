@@ -1,8 +1,8 @@
 import { generate } from "otp-generator";
-import { Prisma } from "../../generated/prisma/client";
-import prisma from "../../lib/prisma";
-import { sendEmail } from "../../utils";
-import { OTPType } from "../../utils/constants";
+import { OTPType } from "../../utils/constants.js";
+import prisma from "../../lib/prisma.js";
+import { sendEmail } from "../../utils/index.js";
+
 
 export class VerificationsService {
     async create(data: { userId: string, type: OTPType }) {

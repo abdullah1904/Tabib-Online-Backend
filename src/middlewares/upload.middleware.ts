@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import path from "path";
-import { cloudinary } from "..";
-import { getCloudinaryFolderName } from "../utils";
+import { cloudinary } from "../index.js";
+import { getCloudinaryFolderName } from "../utils/index.js";
 
 const storage = multer.memoryStorage();
 

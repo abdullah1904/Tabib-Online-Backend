@@ -1,6 +1,6 @@
-import { config } from "../../../utils/config";
+import { config } from "../../../utils/config.js";
 import { Queue } from "bullmq";
-import { logger } from "../../../utils/logger";
+import { logger } from "../../../utils/logger.js";
 
 const pmdcVerificationQueue = new Queue("doctor-verification", {
     connection: { url: config.REDIS_URL! },

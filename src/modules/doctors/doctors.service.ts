@@ -1,9 +1,9 @@
-import { Prisma } from "../../generated/prisma/client";
-import prisma from "../../lib/prisma";
-import { HTTPError } from "../../types";
-import { HttpStatusCode, UserRole } from "../../utils/constants";
-import { matchDoctor } from "./workflows/matching.workflow";
-import { reviewRatings } from "./workflows/reviewRatings.workflow";
+import prisma from "../../lib/prisma.js";
+import { HTTPError } from "../../types/index.js";
+import { IProfessionalInfo, IUser } from "../../types/user.js";
+import { HttpStatusCode, UserRole } from "../../utils/constants.js";
+import { matchDoctor } from "./workflows/matching.workflow.js";
+import { reviewRatings } from "./workflows/reviewRatings.workflow.js";
 
 const {
     HTTP_NOT_FOUND
@@ -27,7 +27,7 @@ export class DoctorsServices {
                 },
             });
 
-            const doctorsWithRating = doctors.map(({ doctorReviews, ...rest }) => ({
+            const doctorsWithRating = doctors.map(({ doctorReviews, ...rest }: { doctorReviews: { rating: number }[] }) => ({
                 ...rest,
                 averageRating: doctorReviews.length
                     ? doctorReviews.reduce((sum, r) => sum + r.rating, 0) / doctorReviews.length
@@ -75,14 +75,14 @@ export class DoctorsServices {
             },
         });
 
-        const doctorsWithRating = allDoctors.map(({ doctorReviews, ...rest }) => ({
+        const doctorsWithRating = allDoctors.map(({ doctorReviews, ...rest }: { doctorReviews: { rating: number }[] }) => ({
             ...rest,
             averageRating: doctorReviews.length
                 ? doctorReviews.reduce((sum, r) => sum + r.rating, 0) / doctorReviews.length
                 : 0,
         }));
 
-        const doctors = doctorsWithRating.sort((a, b) => {
+        const doctors = doctorsWithRating.sort((a: any, b: any) => {
             const aSpec = a.professionalInfo?.specialization;
             const bSpec = b.professionalInfo?.specialization;
 
@@ -101,8 +101,8 @@ export class DoctorsServices {
     async findById(id: string) {
         const doctor = await prisma.users.findUnique({
             where: { id, role: UserRole.DOCTOR },
-            include: { 
-                professionalInfo: true, 
+            include: {
+                professionalInfo: true,
                 doctorReviews: {
                     select: {
                         createdAt: true,
@@ -110,25 +110,26 @@ export class DoctorsServices {
                         comment: true,
                         user: true,
                     }
-                }, 
+                },
                 consultations: {
-                include: {
-                    consultationSlots: true,
+                    include: {
+                        consultationSlots: true,
+                    }
                 }
-            } },
+            },
         });
         if (!doctor) {
             throw new HTTPError("Doctor not found", HTTP_NOT_FOUND.code);
         }
-        const averageRating = doctor.doctorReviews.length
-            ? doctor.doctorReviews.reduce((sum, r) => sum + r.rating, 0) / doctor.doctorReviews.length
+        const averageRating = doctor.doctorReviews.length > 0
+            ? doctor.doctorReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / doctor.doctorReviews.length
             : 0;
         return {
             ...doctor,
             averageRating,
         };
     }
-    async createReview(data: {comment: string, doctorId: string, userId: string}) {
+    async createReview(data: { comment: string, doctorId: string, userId: string }) {
         const doctor = await prisma.users.findUnique({
             where: { id: data.doctorId, role: UserRole.DOCTOR },
         });

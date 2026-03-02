@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpStatusCode } from "./utils/constants";
-import { config } from "./utils/config";
-import { stripe } from ".";
-import { logger } from "./utils/logger";
 import Stripe from "stripe";
-import prisma from "./lib/prisma";
+import { HttpStatusCode } from "./utils/constants.js";
+import { config } from "./utils/config.js";
+import { stripe } from "./index.js";
+import { logger } from "./utils/logger.js";
+import prisma from "./lib/prisma.js";
 
 const {
     HTTP_OK,
