@@ -76,11 +76,19 @@ export class AppointmentsService {
     async list(userId: string) {
         return await prisma.appointments.findMany({
             where: {
-                userId
+                OR: [
+                    { userId },
+                    { doctorId: userId }
+                ]
             },
             include: {
-                doctor: true,
+                doctor: {
+                    include: {
+                        professionalInfo: true
+                    }
+                },
                 user: true,
+                consultation: true,
             }
         });
     }

@@ -8,8 +8,8 @@ const appointmentController = new AppointmentsController();
 
 appointmentsRouter.post("/", authorize(UserRole.USER), appointmentController.createController);
 appointmentsRouter.get("/", appointmentController.listController);
-appointmentsRouter.post("/:id/confirm", authorize(UserRole.DOCTOR), appointmentController.confirmController);
-appointmentsRouter.post("/:id/cancel", authorize(UserRole.USER), appointmentController.cancelController);
-appointmentsRouter.post("/:id/complete", authorize(UserRole.DOCTOR), appointmentController.completeController);
+appointmentsRouter.patch("/:id/confirm", authorize(UserRole.DOCTOR), appointmentController.confirmController);
+appointmentsRouter.patch("/:id/cancel", appointmentController.cancelController);
+appointmentsRouter.patch("/:id/complete", authorize(UserRole.DOCTOR), appointmentController.completeController);
 
 export default appointmentsRouter;
