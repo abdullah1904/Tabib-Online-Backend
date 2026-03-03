@@ -7,12 +7,22 @@ import { config } from '../../utils/config.js';
 import { removeThinking } from '../../utils/index.js';
 import { medicalKnowledgeSearchTool } from './tools/medicalKnoweldgeSearch.tool.js';
 import { tabibbotPrompt } from './prompts/tabibBotSystem.prompt.js';
+import { userMedicalInfoTool } from './tools/userMedicalInfo.tool.js';
+import { recommendDoctorTool } from './tools/recommendDoctor.tool.js';
+import { doctorConsultationsTool } from './tools/doctorConsultations.tool.js';
+import { bookAppointmentTool } from './tools/bookAppointment.tool.js';
 
 
 const checkpointer = new MemorySaver();
 export class TabibBotService {
 
-    private readonly tools = [medicalKnowledgeSearchTool];
+    private readonly tools = [
+        medicalKnowledgeSearchTool, 
+        userMedicalInfoTool, 
+        recommendDoctorTool,
+        doctorConsultationsTool,
+        bookAppointmentTool,
+    ];
 
     private readonly model = new ChatGroq({
         model: config.GROQ_SECONDARY_MODEL,
@@ -37,7 +47,7 @@ export class TabibBotService {
 
     private readonly graph = (() => {
         const chatNode = async (state: typeof this.StateAnnotation.State) => {
-            const recentMessages = state.messages.slice(-5);
+            const recentMessages = state.messages.slice(-10);
             const response = await this.chatbotChain.invoke({
                 question: recentMessages,
             });
@@ -66,13 +76,16 @@ export class TabibBotService {
             .compile({ checkpointer: checkpointer });
     })();
 
-    async chatResponse(message: string, thread_id: string) {
+    async chatResponse(message: string, thread_id: string, userId: string) {
         return this.graph.stream(
             {
                 messages: [new HumanMessage(message.trim())],
             },
             {
-                configurable: { thread_id },
+                configurable: {
+                    thread_id,
+                    userId,
+                },
             },
         );
     }

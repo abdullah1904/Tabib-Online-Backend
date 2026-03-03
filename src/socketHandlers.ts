@@ -31,7 +31,7 @@ export const onDisconnectHandler = (socket: Socket, userId: string) => {
 }
 
 export const onMessageHandler = async (socket: Socket, userId: string, query: string) => {
-    const stream = await tabibBotService.chatResponse(query, userId);
+    const stream = await tabibBotService.chatResponse(query, userId, userId);
     for await (const chunk of stream) {
         if (chunk.tools?.messages) {
             const lastMessage = chunk.tools.messages[chunk.tools.messages.length - 1];

@@ -3,83 +3,84 @@ import { config } from "./config.js"
 import { createTransport } from "nodemailer";
 import { logger } from "./logger.js";
 import { cloudinary } from "../index.js";
+import { DayOfWeek } from "./constants.js";
 
 const generateJWT = (id: string, type: "ACCESS" | "REFRESH") => {
-    if (type === "ACCESS") {
-        return jwt.sign({ id }, config.ACCESS_TOKEN_SECRET!, { expiresIn: config.ACCESS_TOKEN_EXPIRY } as jwt.SignOptions)
-    }
-    else if (type === "REFRESH") {
-        return jwt.sign({ id }, config.REFRESH_TOKEN_SECRET!, { expiresIn: config.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions)
-    }
+  if (type === "ACCESS") {
+    return jwt.sign({ id }, config.ACCESS_TOKEN_SECRET!, { expiresIn: config.ACCESS_TOKEN_EXPIRY } as jwt.SignOptions)
+  }
+  else if (type === "REFRESH") {
+    return jwt.sign({ id }, config.REFRESH_TOKEN_SECRET!, { expiresIn: config.REFRESH_TOKEN_EXPIRY } as jwt.SignOptions)
+  }
 }
 
-const getCloudinaryFolderName = (type: 'SIGN_UP' | 'PROFILE_UPDATE' | 'PMDC_VERIFICATION')=>{
-    let folder = "tabib-online";
-    if (type === 'SIGN_UP') {
-        folder = "tabib-online/user-verifications-document";
-    }
-    if (type === 'PROFILE_UPDATE') {
-        folder = "tabib-online/profile-images";
-    }
-    if (type === 'PMDC_VERIFICATION') {
-        folder = "tabib-online/pmdc-licences";
-    }
-    return folder;
+const getCloudinaryFolderName = (type: 'SIGN_UP' | 'PROFILE_UPDATE' | 'PMDC_VERIFICATION') => {
+  let folder = "tabib-online";
+  if (type === 'SIGN_UP') {
+    folder = "tabib-online/user-verifications-document";
+  }
+  if (type === 'PROFILE_UPDATE') {
+    folder = "tabib-online/profile-images";
+  }
+  if (type === 'PMDC_VERIFICATION') {
+    folder = "tabib-online/pmdc-licences";
+  }
+  return folder;
 }
 
 const deleteCloudinaryImage = async (imageURL: string) => {
-    try {
-        const parts = imageURL.split("/upload/");
-        if (parts.length < 2) {
-            throw new Error("Invalid Cloudinary URL");
-        }
-
-        const pathAfterUpload = parts[1]
-            .split("/")
-            .filter((p) => !p.startsWith("v"))
-            .join("/")
-            .split(".")[0];
-
-        const publicId = pathAfterUpload;
-        await cloudinary.uploader.destroy(publicId);
-        logger.info("Cloudinary image deleted: " + publicId);
-    } catch (error) {
-        logger.error("Error deleting Cloudinary image: " + error);
-        throw error;
+  try {
+    const parts = imageURL.split("/upload/");
+    if (parts.length < 2) {
+      throw new Error("Invalid Cloudinary URL");
     }
+
+    const pathAfterUpload = parts[1]
+      .split("/")
+      .filter((p) => !p.startsWith("v"))
+      .join("/")
+      .split(".")[0];
+
+    const publicId = pathAfterUpload;
+    await cloudinary.uploader.destroy(publicId);
+    logger.info("Cloudinary image deleted: " + publicId);
+  } catch (error) {
+    logger.error("Error deleting Cloudinary image: " + error);
+    throw error;
+  }
 }
 
 const sendEmail = async (to: string, subject: string, content: string) => {
-    try {
-        const transporter = createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: config.MAIL_USER,
-                pass: config.MAIL_PASS
-            },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000,
-        });
+  try {
+    const transporter = createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: config.MAIL_USER,
+        pass: config.MAIL_PASS
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
+    });
 
-        const mailOptions = {
-            from: {
-                name: "Tabib Online",
-                address: config.MAIL_USER
-            },
-            to: to,
-            subject: subject,
-            html: content
-        };
-        await transporter.sendMail(mailOptions);
-        logger.info("Email sent to " + to);
-    }
-    catch (err) {
-        logger.error("Error sending email: " + err);
-        throw err;
-    }
+    const mailOptions = {
+      from: {
+        name: "Tabib Online",
+        address: config.MAIL_USER
+      },
+      to: to,
+      subject: subject,
+      html: content
+    };
+    await transporter.sendMail(mailOptions);
+    logger.info("Email sent to " + to);
+  }
+  catch (err) {
+    logger.error("Error sending email: " + err);
+    throw err;
+  }
 }
 
 const removeThinking = (text: string) => {
@@ -114,7 +115,7 @@ const getPostGraduateDegreeText = (degree: number) => {
     case 0:
       return "None";
     case 1:
-      return "FCPS";  
+      return "FCPS";
     case 2:
       return "MCPS";
     case 3:
@@ -274,13 +275,77 @@ const getSpecializationText = (value: number) => {
   }
 };
 
+const getConsultationTypeText = (value: number) => {
+  switch (value) {
+    case 1:
+      return "In-Person Consultation";
+    case 2:
+      return "Video Consultation";
+    case 3:
+      return "Phone Consultation";
+  }
+}
+
+const getConsultationDurationText = (value: number) => {
+  switch (value) {
+    case 1:
+      return "30 minutes";
+    case 2:
+      return "45 minutes";
+    case 3:
+      return "60 minutes";
+  }
+}
+
+const getDayOfWeekText = (value: number) => {
+  switch (value) {
+    case 0:
+      return "Sunday";
+    case 1:
+      return "Monday";
+    case 2:
+      return "Tuesday";
+    case 3:
+      return "Wednesday";
+    case 4:
+      return "Thursday";
+    case 5:
+      return "Friday";
+    case 6:
+      return "Saturday";
+  }
+}
+
+const getUpcomingDateNumbers = (days: DayOfWeek[], count: number = 4): number[] => {
+  const today = new Date();
+  const result: number[] = [];
+
+  const targetDays = [...new Set(days)].sort((a, b) => a - b);
+
+  for (let i = 0; i < count * 7; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    const day = date.getDay();
+
+    if (targetDays.includes(day)) {
+      result.push(date.getDate());
+    }
+  }
+
+  return result;
+}
+
 export {
-    generateJWT,
-    getCloudinaryFolderName,
-    deleteCloudinaryImage,
-    sendEmail,
-    removeThinking,
-    getMedicalDegreeText,
-    getPostGraduateDegreeText,
-    getSpecializationText
+  generateJWT,
+  getCloudinaryFolderName,
+  deleteCloudinaryImage,
+  sendEmail,
+  removeThinking,
+  getMedicalDegreeText,
+  getPostGraduateDegreeText,
+  getSpecializationText,
+  getConsultationTypeText,
+  getConsultationDurationText,
+  getDayOfWeekText,
+  getUpcomingDateNumbers,
 }
