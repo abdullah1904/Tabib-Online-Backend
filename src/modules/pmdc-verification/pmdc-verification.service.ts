@@ -44,13 +44,23 @@ export class PMDCVerificationService {
                 PMDCLicenseDocumentURL: data.PMDCLicenseDocumentURL,
             }
         });
-        await pmdcVerificationQueue.add("process-verification", {
+        pmdcVerificationQueue.add("process-verification", {
             applicationId: application.id,
             doctorId: data.doctor.connect.id
         });
         return application;
     }
     listVerificationApplications = async (doctorId: string) => {
+        if(!doctorId){
+            throw new HTTPError("Doctor ID is required to list verification applications.", HTTP_BAD_REQUEST.code);
+        }
+        const doctor = await prisma.users.findUnique({
+            where: { id: doctorId, role: UserRole.DOCTOR },
+        });
+
+        if(!doctor){
+            throw new HTTPError("Doctor not found with the provided ID.", HTTP_NOT_FOUND.code);
+        }
         return await prisma.pMDCVerificationApplication.findMany({
             where: { doctorId },
             orderBy: { createdAt: 'desc' },
