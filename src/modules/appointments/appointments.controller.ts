@@ -58,6 +58,19 @@ export class AppointmentsController {
             next(error);
         }
     }
+    getController = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id: appointmentId } = req.params;
+            const appointment = await this.appointmentsService.findById(appointmentId.toString());
+            res.status(HTTP_OK.code).json({
+                message: "Appointment retrieved successfully",
+                appointment
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
     confirmController = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id: appointmentId } = req.params;

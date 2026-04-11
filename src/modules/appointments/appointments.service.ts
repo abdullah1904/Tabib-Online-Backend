@@ -93,13 +93,17 @@ export class AppointmentsService {
         });
     }
     async findById(id: string) {
-        return await prisma.appointments.findUnique({
+        const appointment = await prisma.appointments.findUnique({
             where: { id },
             include: {
                 doctor: true,
                 user: true,
-            }
+            },
         });
+        if (!appointment) {
+            throw new HTTPError("Appointment not found", HTTP_NOT_FOUND.code);
+        }
+        return appointment;
     }
     async search(data: Prisma.AppointmentsFindManyArgs) {
         return await prisma.appointments.findMany({
