@@ -90,7 +90,7 @@ export class UsersControllers {
             });
         }
         catch (error) {
-
+            next(error);
         }
     }
     updatePmdcInfoController = async (req: Request, res: Response, next: NextFunction) => {
@@ -107,6 +107,19 @@ export class UsersControllers {
             });
         }
         catch (error) {
+            next(error);
+        }
+    }
+    getProfessionalStatsController = async (req: Request, res: Response, next: NextFunction) => {
+        try{
+            const {id: userId} = req.user;
+            const stats = await this.usersService.getProfessionalStats(userId);
+            res.status(HTTP_OK.code).json({
+                message: "Professional stats retrieved successfully",
+                stats
+            });
+        }   
+        catch(error){
             next(error);
         }
     }

@@ -11,6 +11,7 @@ import { StripeWebHook } from "./webhooks.js";
 import loggingMiddleware from "./middlewares/logging.middleware.js";
 import appRouter from "./routes.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import "./modules/pmdc-verification/workers/pmdcVerification.worker.js";
 import { onConnectionHandler, onDisconnectHandler, onMessageHandler } from "./socketHandlers.js";
 import { config } from "./utils/config.js";
 import { logger } from "./utils/logger.js";

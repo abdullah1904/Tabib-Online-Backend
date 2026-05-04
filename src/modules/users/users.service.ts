@@ -1,7 +1,7 @@
 import prisma from "../../lib/prisma.js";
 import { HTTPError } from "../../types/index.js";
 import { deleteCloudinaryImage } from "../../utils/index.js";
-import { HttpStatusCode, UserRole } from "../../utils/constants.js";
+import { AppointmentStatus, HttpStatusCode, UserRole } from "../../utils/constants.js";
 import { Prisma } from "../../../generated/prisma/client.js";
 
 const {
@@ -126,5 +126,48 @@ export class UsersService {
                 isActive: true
             }
         });
+    }
+    async getProfessionalStats(userId: string) {
+        const [totalAppointments, pendingAppointments, averageRating, monthlyStats] = await Promise.all([
+            prisma.appointments.count({
+                where: { doctorId: userId }
+            }),
+            prisma.appointments.count({
+                where: { doctorId: userId, status: AppointmentStatus.PENDING }
+            }),
+            prisma.reviews.aggregate({
+                where: { doctorId: userId },
+                _avg: {
+                    rating: true
+                }
+            }),
+            prisma.appointments.groupBy({
+                by: ['createdAt'],
+                where: {
+                    doctorId: userId,
+                    createdAt: {
+                        gte: new Date(new Date().setMonth(new Date().getMonth() - 6))
+                    }
+                },
+                _count: {
+                    id: true
+                },
+                _sum: {
+                    totalPrice: true
+                }
+            })
+        ]);
+        return {
+            monthlyStats: monthlyStats.map(stat => ({
+                month: stat.createdAt.getMonth() + 1,
+                year: stat.createdAt.getFullYear(),
+                totalAppointments: stat._count.id,
+                totalEarnings: stat._sum.totalPrice || 0
+            })),
+            totalAppointments,
+            pendingAppointments,
+            averageRating: averageRating._avg.rating || 0
+        };
+
     }
 }

@@ -11,10 +11,8 @@ const embeddings = new CohereEmbeddings({
 
 const vectorStore = new QdrantVectorStore(embeddings, {
     apiKey: config.QDRANT_API_KEY!,
-    collectionName: config.QDRANT_COLLECTION_NAME!,
     url: config.QDRANT_URL!,
-    contentPayloadKey: "page_content",
-    metadataPayloadKey: "metadata",
+    collectionName: config.QDRANT_COLLECTION_NAME!,
 });
 
 export const medicalKnowledgeSearchTool = tool(

@@ -33,9 +33,9 @@ export class PMDCVerificationService {
         if (alreadyApplicationCount >= 3) {
             throw new HTTPError("Maximum number of verification applications reached for this doctor.", HTTP_BAD_REQUEST.code);
         }
-        if(professionalInfo?.PMDCVerifiedAt){
-            throw new HTTPError("Doctor is already verified by PMDC.", HTTP_BAD_REQUEST.code);
-        }
+        // if(professionalInfo?.PMDCVerifiedAt){
+        //     throw new HTTPError("Doctor is already verified by PMDC.", HTTP_BAD_REQUEST.code);
+        // }
         const application = await prisma.pMDCVerificationApplication.create({
             data: {
                 doctor: { connect: { id: data.doctor.connect.id } },
@@ -44,7 +44,7 @@ export class PMDCVerificationService {
                 PMDCLicenseDocumentURL: data.PMDCLicenseDocumentURL,
             }
         });
-        pmdcVerificationQueue.add("process-verification", {
+        await pmdcVerificationQueue.add("process-verification", {
             applicationId: application.id,
             doctorId: data.doctor.connect.id
         });

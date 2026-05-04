@@ -7,7 +7,6 @@ const pmdcVerificationQueue = new Queue("doctor-verification", {
     defaultJobOptions: {
         removeOnComplete: true,
         attempts: 2,
-        delay: 5000,
     }
 });
 

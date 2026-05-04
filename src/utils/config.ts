@@ -22,7 +22,7 @@ export const config = {
     GROQ_API_KEY: getValue("GROQ_API_KEY", null),
     GROQ_PRIMARY_MODEL: getValue("GROQ_PRIMARY_MODEL", "qwen/qwen3-32b"),
     GROQ_SECONDARY_MODEL: getValue("GROQ_SECONDARY_MODEL", "openai/gpt-oss-20b"),
-    QDRANT_URL: getValue("QDRANT_URL", "http://localhost:6333"),
+    QDRANT_URL: getValue("QDRANT_URL", "http://127.0.0.1:6333"),
     QDRANT_API_KEY: getValue("QDRANT_API_KEY", null),
     QDRANT_COLLECTION_NAME: getValue("QDRANT_COLLECTION_NAME", null),
     COHERE_API_KEY: getValue("COHERE_API_KEY", null),

@@ -98,6 +98,7 @@ export class AppointmentsService {
             include: {
                 doctor: true,
                 user: true,
+                consultation: true,
             },
         });
         if (!appointment) {

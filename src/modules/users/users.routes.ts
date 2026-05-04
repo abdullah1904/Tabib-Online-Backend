@@ -11,6 +11,7 @@ usersRouter.patch("/profile/personal", uploadImageMiddleware('PROFILE_UPDATE'), 
 usersRouter.get("/profile/medical", authorize(UserRole.USER),usersControllers.getMedicalRecordController);
 usersRouter.put("/profile/medical", authorize(UserRole.USER),usersControllers.updateMedicalRecordController);
 usersRouter.get("/profile/professional", authorize(UserRole.DOCTOR),usersControllers.getProfessionalInfoController);
+usersRouter.get('/profile/professional/stats', authorize(UserRole.DOCTOR), usersControllers.getProfessionalStatsController);
 usersRouter.put("/profile/professional", authorize(UserRole.DOCTOR),usersControllers.updateProfessionalInfoController);
 usersRouter.put("/profile/pmdc", authorize(UserRole.DOCTOR),usersControllers.updatePmdcInfoController);
 usersRouter.get("/profile/wallet/checkouts", authorize(UserRole.USER), usersControllers.listCheckoutsController);

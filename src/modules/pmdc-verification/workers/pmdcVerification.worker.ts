@@ -15,7 +15,7 @@ import {
   sendEmail,
 } from "../../../utils/index.js";
 
-const pmdcVerificationWorker = new Worker("doctor-verification", async ({ name, data }: Job) => {
+export const pmdcVerificationWorker = new Worker("doctor-verification", async ({ name, data }: Job) => {
   logger.info(`Processing doctor verification job: ${name} with data: ${JSON.stringify(data)}`);
   if (name === "process-verification") {
     const { applicationId, doctorId } = data;
