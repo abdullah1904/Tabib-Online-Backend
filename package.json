@@ -45,7 +45,7 @@
     "langchain": "^1.2.3",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.6",
+    "nodemailer": "^8.0.7",
     "otp-generator": "^4.0.1",
     "postgres": "^3.4.7",
     "socket.io": "^4.8.1",
@@ -67,40 +67,25 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
-  "pnpm": {
-    "overrides": {
-      "fast-xml-parser": ">=5.3.6",
-      "lodash": ">=4.17.23",
-      "hono": ">=4.11.7",
-      "multer@<2.1.0": ">=2.1.0",
-      "multer@<2.1.1": ">=2.1.1",
-      "hono@<4.12.4": ">=4.12.4",
-      "fast-xml-parser@>=5.0.0 <5.3.8": ">=5.3.8",
-      "@hono/node-server@<1.19.10": ">=1.19.10",
-      "express-rate-limit@>=8.2.0 <8.2.2": ">=8.2.2",
-      "hono@<4.12.7": ">=4.12.7",
-      "undici@>=6.0.0 <6.24.0": ">=6.24.0",
-      "undici@<6.24.0": ">=6.24.0",
-      "socket.io-parser@>=4.0.0 <4.2.6": ">=4.2.6",
-      "fast-xml-parser@>=5.0.0 <5.5.6": ">=5.5.6",
-      "effect@<3.20.0": ">=3.20.0",
-      "fast-xml-parser@>=4.0.0-beta.3 <=5.5.6": ">=5.5.7",
-      "convict@<=6.2.4": ">=6.2.5",
-      "nodemailer@<8.0.4": ">=8.0.4",
-      "path-to-regexp@>=8.0.0 <8.4.0": ">=8.4.0",
-      "lodash@>=4.0.0 <=4.17.23": ">=4.18.0",
-      "lodash@<=4.17.23": ">=4.18.0",
-      "defu@<=6.1.4": ">=6.1.5",
-      "hono@<4.12.12": ">=4.12.12",
-      "nodemailer@<=8.0.4": ">=8.0.5",
-      "hono@>=4.0.0 <=4.12.11": ">=4.12.12",
-      "@hono/node-server@<1.19.13": ">=1.19.13",
-      "langsmith@<=0.5.17": ">=0.5.18",
-      "undici": "6.21.2"
-    },
-    "onlyBuiltDependencies": [
-      "@prisma/engines",
-      "prisma"
-    ]
-  }
+ "pnpm": {
+  "overrides": {
+    "undici": ">=6.24.0",
+    "hono": ">=4.12.18",
+    "fast-xml-parser": ">=5.7.0",
+    "fast-xml-builder": ">=1.1.7",
+    "langsmith": ">=0.5.19",
+    "uuid": ">=11.1.1",
+    "ip-address": ">=10.1.1",
+    "socket.io-parser": ">=4.2.6",
+    "path-to-regexp": ">=8.4.0",
+    "lodash": ">=4.18.0",
+    "nodemailer": ">=8.0.5",
+    "multer": ">=2.1.1",
+    "express-rate-limit": ">=8.2.2"
+  },
+  "onlyBuiltDependencies": [
+    "@prisma/engines",
+    "prisma"
+  ]
+}
 }
