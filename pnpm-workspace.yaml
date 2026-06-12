@@ -1,3 +1,9 @@
+allowBuilds:
+  '@prisma/engines': true
+  bcrypt: true
+  esbuild: true
+  msgpackr-extract: true
+  prisma: true
 minimumReleaseAgeExclude:
   - '@hono/node-server@1.19.13'
   - ws@8.20.1
