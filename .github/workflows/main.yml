@@ -34,7 +34,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/tabib_online_backend
             
             docker stop tabib_online_backend || true
             docker rm tabib_online_backend || true
