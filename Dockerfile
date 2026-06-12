@@ -1,17 +1,18 @@
 FROM node:22-alpine
 
+RUN corepack enable && corepack prepare pnpm@10 --activate
+
 WORKDIR /app
 
-COPY package*.json ./
-COPY pnpm-lock.yaml ./
-
-RUN npm install -g pnpm@10
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
 
 RUN pnpm db:generate
 RUN pnpm build
+
+RUN pnpm prune --prod
 
 EXPOSE 3004
 
