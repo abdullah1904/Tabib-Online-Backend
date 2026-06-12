@@ -12,8 +12,6 @@ COPY . .
 RUN pnpm db:generate
 RUN pnpm build
 
-RUN pnpm prune --prod
-
 EXPOSE 3004
 
 CMD ["sh", "-c", "npx prisma migrate deploy && pnpm start"]
